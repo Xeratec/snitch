@@ -9,31 +9,27 @@
 pub enum Format {
     Illegal(u32),
     Unit(FormatUnit),
+    Luimm5Imm5RdRs1(FormatLuimm5Imm5RdRs1),
+    Luimm5RdRs1Rs2(FormatLuimm5RdRs1Rs2),
     AqrlRdRs1(FormatAqrlRdRs1),
     AqrlRdRs1Rs2(FormatAqrlRdRs1Rs2),
+    Bimm12hiBimm12loImm5Rs1(FormatBimm12hiBimm12loImm5Rs1),
     Bimm12hiBimm12loRs1Rs2(FormatBimm12hiBimm12loRs1Rs2),
     FmPredRdRs1Succ(FormatFmPredRdRs1Succ),
-    Imm12Rd(FormatImm12Rd),
-    Imm12RdRmRs1(FormatImm12RdRmRs1),
     Imm12RdRs1(FormatImm12RdRs1),
-    Imm12Rs1(FormatImm12Rs1),
-    Imm12Rs1StaggerMaskStaggerMax(FormatImm12Rs1StaggerMaskStaggerMax),
     Imm12hiImm12loRs1Rs2(FormatImm12hiImm12loRs1Rs2),
     Imm20Rd(FormatImm20Rd),
-    Imm5Rd(FormatImm5Rd),
     Imm5RdRs1(FormatImm5RdRs1),
+    Imm6RdRs1(FormatImm6RdRs1),
     Jimm20Rd(FormatJimm20Rd),
+    Prs3Rs1Rs2(FormatPrs3Rs1Rs2),
     RdRmRs1(FormatRdRmRs1),
     RdRmRs1Rs2(FormatRdRmRs1Rs2),
     RdRmRs1Rs2Rs3(FormatRdRmRs1Rs2Rs3),
     RdRs1(FormatRdRs1),
     RdRs1Rs2(FormatRdRs1Rs2),
-    RdRs1Rs2Rs3(FormatRdRs1Rs2Rs3),
-    RdRs1Rs3Shamt(FormatRdRs1Rs3Shamt),
     RdRs1Shamt(FormatRdRs1Shamt),
     RdRs1Shamtw(FormatRdRs1Shamtw),
-    RdRs2(FormatRdRs2),
-    Rs1(FormatRs1),
     Rs1Rs2(FormatRs1Rs2),
 }
 
@@ -42,31 +38,27 @@ impl Format {
         match self {
             Self::Illegal(x) => *x,
             Self::Unit(x) => x.raw,
+            Self::Luimm5Imm5RdRs1(x) => x.raw,
+            Self::Luimm5RdRs1Rs2(x) => x.raw,
             Self::AqrlRdRs1(x) => x.raw,
             Self::AqrlRdRs1Rs2(x) => x.raw,
+            Self::Bimm12hiBimm12loImm5Rs1(x) => x.raw,
             Self::Bimm12hiBimm12loRs1Rs2(x) => x.raw,
             Self::FmPredRdRs1Succ(x) => x.raw,
-            Self::Imm12Rd(x) => x.raw,
-            Self::Imm12RdRmRs1(x) => x.raw,
             Self::Imm12RdRs1(x) => x.raw,
-            Self::Imm12Rs1(x) => x.raw,
-            Self::Imm12Rs1StaggerMaskStaggerMax(x) => x.raw,
             Self::Imm12hiImm12loRs1Rs2(x) => x.raw,
             Self::Imm20Rd(x) => x.raw,
-            Self::Imm5Rd(x) => x.raw,
             Self::Imm5RdRs1(x) => x.raw,
+            Self::Imm6RdRs1(x) => x.raw,
             Self::Jimm20Rd(x) => x.raw,
+            Self::Prs3Rs1Rs2(x) => x.raw,
             Self::RdRmRs1(x) => x.raw,
             Self::RdRmRs1Rs2(x) => x.raw,
             Self::RdRmRs1Rs2Rs3(x) => x.raw,
             Self::RdRs1(x) => x.raw,
             Self::RdRs1Rs2(x) => x.raw,
-            Self::RdRs1Rs2Rs3(x) => x.raw,
-            Self::RdRs1Rs3Shamt(x) => x.raw,
             Self::RdRs1Shamt(x) => x.raw,
             Self::RdRs1Shamtw(x) => x.raw,
-            Self::RdRs2(x) => x.raw,
-            Self::Rs1(x) => x.raw,
             Self::Rs1Rs2(x) => x.raw,
         }
     }
@@ -77,31 +69,27 @@ impl std::fmt::Display for Format {
         match self {
             Self::Illegal(x) => write!(f, "<illegal 0x{:x}>", x),
             Self::Unit(x) => write!(f, "{}", x),
+            Self::Luimm5Imm5RdRs1(x) => write!(f, "{}", x),
+            Self::Luimm5RdRs1Rs2(x) => write!(f, "{}", x),
             Self::AqrlRdRs1(x) => write!(f, "{}", x),
             Self::AqrlRdRs1Rs2(x) => write!(f, "{}", x),
+            Self::Bimm12hiBimm12loImm5Rs1(x) => write!(f, "{}", x),
             Self::Bimm12hiBimm12loRs1Rs2(x) => write!(f, "{}", x),
             Self::FmPredRdRs1Succ(x) => write!(f, "{}", x),
-            Self::Imm12Rd(x) => write!(f, "{}", x),
-            Self::Imm12RdRmRs1(x) => write!(f, "{}", x),
             Self::Imm12RdRs1(x) => write!(f, "{}", x),
-            Self::Imm12Rs1(x) => write!(f, "{}", x),
-            Self::Imm12Rs1StaggerMaskStaggerMax(x) => write!(f, "{}", x),
             Self::Imm12hiImm12loRs1Rs2(x) => write!(f, "{}", x),
             Self::Imm20Rd(x) => write!(f, "{}", x),
-            Self::Imm5Rd(x) => write!(f, "{}", x),
             Self::Imm5RdRs1(x) => write!(f, "{}", x),
+            Self::Imm6RdRs1(x) => write!(f, "{}", x),
             Self::Jimm20Rd(x) => write!(f, "{}", x),
+            Self::Prs3Rs1Rs2(x) => write!(f, "{}", x),
             Self::RdRmRs1(x) => write!(f, "{}", x),
             Self::RdRmRs1Rs2(x) => write!(f, "{}", x),
             Self::RdRmRs1Rs2Rs3(x) => write!(f, "{}", x),
             Self::RdRs1(x) => write!(f, "{}", x),
             Self::RdRs1Rs2(x) => write!(f, "{}", x),
-            Self::RdRs1Rs2Rs3(x) => write!(f, "{}", x),
-            Self::RdRs1Rs3Shamt(x) => write!(f, "{}", x),
             Self::RdRs1Shamt(x) => write!(f, "{}", x),
             Self::RdRs1Shamtw(x) => write!(f, "{}", x),
-            Self::RdRs2(x) => write!(f, "{}", x),
-            Self::Rs1(x) => write!(f, "{}", x),
             Self::Rs1Rs2(x) => write!(f, "{}", x),
         }
     }
@@ -126,6 +114,38 @@ pub enum OpcodeUnit {
     Mret,
     Dret,
     Wfi,
+    CAddi4spn,
+    CFld,
+    CLw,
+    CFlw,
+    CFsd,
+    CSw,
+    CFsw,
+    CAddi,
+    CJal,
+    CLi,
+    CLui,
+    CSrli,
+    CSrai,
+    CAndi,
+    CSub,
+    CXor,
+    COr,
+    CAnd,
+    CJ,
+    CBeqz,
+    CBnez,
+    CSlli,
+    CFldsp,
+    CLwsp,
+    CFlwsp,
+    CMv,
+    CAdd,
+    CFsdsp,
+    CSwsp,
+    CFswsp,
+    CSubw,
+    CAddw,
 }
 
 impl std::fmt::Display for FormatUnit {
@@ -145,6 +165,124 @@ impl std::fmt::Display for OpcodeUnit {
             Self::Mret => write!(f, "mret"),
             Self::Dret => write!(f, "dret"),
             Self::Wfi => write!(f, "wfi"),
+            Self::CAddi4spn => write!(f, "c.addi4spn"),
+            Self::CFld => write!(f, "c.fld"),
+            Self::CLw => write!(f, "c.lw"),
+            Self::CFlw => write!(f, "c.flw"),
+            Self::CFsd => write!(f, "c.fsd"),
+            Self::CSw => write!(f, "c.sw"),
+            Self::CFsw => write!(f, "c.fsw"),
+            Self::CAddi => write!(f, "c.addi"),
+            Self::CJal => write!(f, "c.jal"),
+            Self::CLi => write!(f, "c.li"),
+            Self::CLui => write!(f, "c.lui"),
+            Self::CSrli => write!(f, "c.srli"),
+            Self::CSrai => write!(f, "c.srai"),
+            Self::CAndi => write!(f, "c.andi"),
+            Self::CSub => write!(f, "c.sub"),
+            Self::CXor => write!(f, "c.xor"),
+            Self::COr => write!(f, "c.or"),
+            Self::CAnd => write!(f, "c.and"),
+            Self::CJ => write!(f, "c.j"),
+            Self::CBeqz => write!(f, "c.beqz"),
+            Self::CBnez => write!(f, "c.bnez"),
+            Self::CSlli => write!(f, "c.slli"),
+            Self::CFldsp => write!(f, "c.fldsp"),
+            Self::CLwsp => write!(f, "c.lwsp"),
+            Self::CFlwsp => write!(f, "c.flwsp"),
+            Self::CMv => write!(f, "c.mv"),
+            Self::CAdd => write!(f, "c.add"),
+            Self::CFsdsp => write!(f, "c.fsdsp"),
+            Self::CSwsp => write!(f, "c.swsp"),
+            Self::CFswsp => write!(f, "c.fswsp"),
+            Self::CSubw => write!(f, "c.subw"),
+            Self::CAddw => write!(f, "c.addw"),
+        }
+    }
+}
+
+/// The `Luimm5Imm5RdRs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub struct FormatLuimm5Imm5RdRs1 {
+    pub op: OpcodeLuimm5Imm5RdRs1,
+    pub raw: u32,
+    pub luimm5: u32,
+    pub imm5: u32,
+    pub rd: u32,
+    pub rs1: u32,
+}
+
+impl FormatLuimm5Imm5RdRs1 {}
+
+/// Opcodes with the `Luimm5Imm5RdRs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub enum OpcodeLuimm5Imm5RdRs1 {
+    PExtract,
+    PExtractu,
+    PInsert,
+    PBset,
+    PBclr,
+}
+
+impl std::fmt::Display for FormatLuimm5Imm5RdRs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.op)?;
+        write!(f, " Luimm5={:x}", self.luimm5)?;
+        write!(f, " imm5={:x}", self.imm5)?;
+        write!(f, " rd={:x}", self.rd)?;
+        write!(f, " rs1={:x}", self.rs1)?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for OpcodeLuimm5Imm5RdRs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::PExtract => write!(f, "p.extract"),
+            Self::PExtractu => write!(f, "p.extractu"),
+            Self::PInsert => write!(f, "p.insert"),
+            Self::PBset => write!(f, "p.bset"),
+            Self::PBclr => write!(f, "p.bclr"),
+        }
+    }
+}
+
+/// The `Luimm5RdRs1Rs2` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub struct FormatLuimm5RdRs1Rs2 {
+    pub op: OpcodeLuimm5RdRs1Rs2,
+    pub raw: u32,
+    pub luimm5: u32,
+    pub rd: u32,
+    pub rs1: u32,
+    pub rs2: u32,
+}
+
+impl FormatLuimm5RdRs1Rs2 {}
+
+/// Opcodes with the `Luimm5RdRs1Rs2` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub enum OpcodeLuimm5RdRs1Rs2 {
+    PAddn,
+    PAddun,
+}
+
+impl std::fmt::Display for FormatLuimm5RdRs1Rs2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.op)?;
+        write!(f, " Luimm5={:x}", self.luimm5)?;
+        write!(f, " rd={:x}", self.rd)?;
+        write!(f, " rs1={:x}", self.rs1)?;
+        write!(f, " rs2={:x}", self.rs2)?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for OpcodeLuimm5RdRs1Rs2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::PAddn => write!(f, "p.addN"),
+            Self::PAddun => write!(f, "p.adduN"),
         }
     }
 }
@@ -263,6 +401,55 @@ impl std::fmt::Display for OpcodeAqrlRdRs1Rs2 {
     }
 }
 
+/// The `Bimm12hiBimm12loImm5Rs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub struct FormatBimm12hiBimm12loImm5Rs1 {
+    pub op: OpcodeBimm12hiBimm12loImm5Rs1,
+    pub raw: u32,
+    pub bimm12hi: u32,
+    pub bimm12lo: u32,
+    pub imm5: u32,
+    pub rs1: u32,
+}
+
+impl FormatBimm12hiBimm12loImm5Rs1 {
+    pub fn bimm(&self) -> i32 {
+        (((((self.bimm12lo >> 0) & 0x1) << 11
+            | ((self.bimm12lo >> 1) & 0xf) << 1
+            | ((self.bimm12hi >> 0) & 0x3f) << 5
+            | ((self.bimm12hi >> 6) & 0x1) << 12)
+            << 19) as i32)
+            >> 19
+    }
+}
+
+/// Opcodes with the `Bimm12hiBimm12loImm5Rs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub enum OpcodeBimm12hiBimm12loImm5Rs1 {
+    PBeqimm,
+    PBneimm,
+}
+
+impl std::fmt::Display for FormatBimm12hiBimm12loImm5Rs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.op)?;
+        write!(f, " bimm12hi={:x}", self.bimm12hi)?;
+        write!(f, " bimm12lo={:x}", self.bimm12lo)?;
+        write!(f, " imm5={:x}", self.imm5)?;
+        write!(f, " rs1={:x}", self.rs1)?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for OpcodeBimm12hiBimm12loImm5Rs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::PBeqimm => write!(f, "p.beqimm"),
+            Self::PBneimm => write!(f, "p.bneimm"),
+        }
+    }
+}
+
 /// The `Bimm12hiBimm12loRs1Rs2` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub struct FormatBimm12hiBimm12loRs1Rs2 {
@@ -360,86 +547,6 @@ impl std::fmt::Display for OpcodeFmPredRdRs1Succ {
     }
 }
 
-/// The `Imm12Rd` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatImm12Rd {
-    pub op: OpcodeImm12Rd,
-    pub raw: u32,
-    pub imm12: u32,
-    pub rd: u32,
-}
-
-impl FormatImm12Rd {
-    pub fn imm(&self) -> i32 {
-        ((self.imm12 << 20) as i32) >> 20
-    }
-}
-
-/// Opcodes with the `Imm12Rd` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeImm12Rd {
-    Scfgri,
-}
-
-impl std::fmt::Display for FormatImm12Rd {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " imm12={:x}", self.imm12)?;
-        write!(f, " rd={:x}", self.rd)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeImm12Rd {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Scfgri => write!(f, "scfgri"),
-        }
-    }
-}
-
-/// The `Imm12RdRmRs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatImm12RdRmRs1 {
-    pub op: OpcodeImm12RdRmRs1,
-    pub raw: u32,
-    pub imm12: u32,
-    pub rd: u32,
-    pub rm: u32,
-    pub rs1: u32,
-}
-
-impl FormatImm12RdRmRs1 {
-    pub fn imm(&self) -> i32 {
-        ((self.imm12 << 20) as i32) >> 20
-    }
-}
-
-/// Opcodes with the `Imm12RdRmRs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeImm12RdRmRs1 {
-    Irep,
-}
-
-impl std::fmt::Display for FormatImm12RdRmRs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " imm12={:x}", self.imm12)?;
-        write!(f, " rd={:x}", self.rd)?;
-        write!(f, " rm={:x}", self.rm)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeImm12RdRmRs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Irep => write!(f, "irep"),
-        }
-    }
-}
-
 /// The `Imm12RdRs1` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub struct FormatImm12RdRs1 {
@@ -466,24 +573,29 @@ pub enum OpcodeImm12RdRs1 {
     Xori,
     Ori,
     Andi,
-    Addiw,
     Lb,
     Lh,
     Lw,
-    Ld,
     Lbu,
     Lhu,
-    Lwu,
     FenceI,
+    Addiw,
+    Ld,
+    Lwu,
+    Flw,
+    Fld,
+    Flq,
     Csrrw,
     Csrrs,
     Csrrc,
     Csrrwi,
     Csrrsi,
     Csrrci,
-    Flw,
-    Fld,
-    Flq,
+    PLbIrpost,
+    PLbuIrpost,
+    PLhIrpost,
+    PLhuIrpost,
+    PLwIrpost,
     Flh,
     Flb,
 }
@@ -508,108 +620,31 @@ impl std::fmt::Display for OpcodeImm12RdRs1 {
             Self::Xori => write!(f, "xori"),
             Self::Ori => write!(f, "ori"),
             Self::Andi => write!(f, "andi"),
-            Self::Addiw => write!(f, "addiw"),
             Self::Lb => write!(f, "lb"),
             Self::Lh => write!(f, "lh"),
             Self::Lw => write!(f, "lw"),
-            Self::Ld => write!(f, "ld"),
             Self::Lbu => write!(f, "lbu"),
             Self::Lhu => write!(f, "lhu"),
-            Self::Lwu => write!(f, "lwu"),
             Self::FenceI => write!(f, "fence.i"),
+            Self::Addiw => write!(f, "addiw"),
+            Self::Ld => write!(f, "ld"),
+            Self::Lwu => write!(f, "lwu"),
+            Self::Flw => write!(f, "flw"),
+            Self::Fld => write!(f, "fld"),
+            Self::Flq => write!(f, "flq"),
             Self::Csrrw => write!(f, "csrrw"),
             Self::Csrrs => write!(f, "csrrs"),
             Self::Csrrc => write!(f, "csrrc"),
             Self::Csrrwi => write!(f, "csrrwi"),
             Self::Csrrsi => write!(f, "csrrsi"),
             Self::Csrrci => write!(f, "csrrci"),
-            Self::Flw => write!(f, "flw"),
-            Self::Fld => write!(f, "fld"),
-            Self::Flq => write!(f, "flq"),
+            Self::PLbIrpost => write!(f, "p.lb.irpost"),
+            Self::PLbuIrpost => write!(f, "p.lbu.irpost"),
+            Self::PLhIrpost => write!(f, "p.lh.irpost"),
+            Self::PLhuIrpost => write!(f, "p.lhu.irpost"),
+            Self::PLwIrpost => write!(f, "p.lw.irpost"),
             Self::Flh => write!(f, "flh"),
             Self::Flb => write!(f, "flb"),
-        }
-    }
-}
-
-/// The `Imm12Rs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatImm12Rs1 {
-    pub op: OpcodeImm12Rs1,
-    pub raw: u32,
-    pub imm12: u32,
-    pub rs1: u32,
-}
-
-impl FormatImm12Rs1 {
-    pub fn imm(&self) -> i32 {
-        ((self.imm12 << 20) as i32) >> 20
-    }
-}
-
-/// Opcodes with the `Imm12Rs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeImm12Rs1 {
-    Scfgwi,
-}
-
-impl std::fmt::Display for FormatImm12Rs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " imm12={:x}", self.imm12)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeImm12Rs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Scfgwi => write!(f, "scfgwi"),
-        }
-    }
-}
-
-/// The `Imm12Rs1StaggerMaskStaggerMax` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatImm12Rs1StaggerMaskStaggerMax {
-    pub op: OpcodeImm12Rs1StaggerMaskStaggerMax,
-    pub raw: u32,
-    pub imm12: u32,
-    pub rs1: u32,
-    pub stagger_mask: u32,
-    pub stagger_max: u32,
-}
-
-impl FormatImm12Rs1StaggerMaskStaggerMax {
-    pub fn imm(&self) -> i32 {
-        ((self.imm12 << 20) as i32) >> 20
-    }
-}
-
-/// Opcodes with the `Imm12Rs1StaggerMaskStaggerMax` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeImm12Rs1StaggerMaskStaggerMax {
-    FrepO,
-    FrepI,
-}
-
-impl std::fmt::Display for FormatImm12Rs1StaggerMaskStaggerMax {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " imm12={:x}", self.imm12)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        write!(f, " stagger_mask={:x}", self.stagger_mask)?;
-        write!(f, " stagger_max={:x}", self.stagger_max)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeImm12Rs1StaggerMaskStaggerMax {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::FrepO => write!(f, "frep.o"),
-            Self::FrepI => write!(f, "frep.i"),
         }
     }
 }
@@ -642,6 +677,9 @@ pub enum OpcodeImm12hiImm12loRs1Rs2 {
     Fsw,
     Fsd,
     Fsq,
+    PSbIrpost,
+    PShIrpost,
+    PSwIrpost,
     Fsh,
     Fsb,
 }
@@ -667,6 +705,9 @@ impl std::fmt::Display for OpcodeImm12hiImm12loRs1Rs2 {
             Self::Fsw => write!(f, "fsw"),
             Self::Fsd => write!(f, "fsd"),
             Self::Fsq => write!(f, "fsq"),
+            Self::PSbIrpost => write!(f, "p.sb.irpost"),
+            Self::PShIrpost => write!(f, "p.sh.irpost"),
+            Self::PSwIrpost => write!(f, "p.sw.irpost"),
             Self::Fsh => write!(f, "fsh"),
             Self::Fsb => write!(f, "fsb"),
         }
@@ -709,40 +750,6 @@ impl std::fmt::Display for OpcodeImm20Rd {
     }
 }
 
-/// The `Imm5Rd` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatImm5Rd {
-    pub op: OpcodeImm5Rd,
-    pub raw: u32,
-    pub imm5: u32,
-    pub rd: u32,
-}
-
-impl FormatImm5Rd {}
-
-/// Opcodes with the `Imm5Rd` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeImm5Rd {
-    Dmstati,
-}
-
-impl std::fmt::Display for FormatImm5Rd {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " imm5={:x}", self.imm5)?;
-        write!(f, " rd={:x}", self.rd)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeImm5Rd {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Dmstati => write!(f, "dmstati"),
-        }
-    }
-}
-
 /// The `Imm5RdRs1` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub struct FormatImm5RdRs1 {
@@ -758,7 +765,8 @@ impl FormatImm5RdRs1 {}
 /// Opcodes with the `Imm5RdRs1` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub enum OpcodeImm5RdRs1 {
-    Dmcpyi,
+    PClip,
+    PClipu,
 }
 
 impl std::fmt::Display for FormatImm5RdRs1 {
@@ -774,7 +782,188 @@ impl std::fmt::Display for FormatImm5RdRs1 {
 impl std::fmt::Display for OpcodeImm5RdRs1 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::Dmcpyi => write!(f, "dmcpyi"),
+            Self::PClip => write!(f, "p.clip"),
+            Self::PClipu => write!(f, "p.clipu"),
+        }
+    }
+}
+
+/// The `Imm6RdRs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub struct FormatImm6RdRs1 {
+    pub op: OpcodeImm6RdRs1,
+    pub raw: u32,
+    pub imm6: u32,
+    pub rd: u32,
+    pub rs1: u32,
+}
+
+impl FormatImm6RdRs1 {
+    pub fn imm(&self) -> i32 {
+        (((((self.imm6 >> 0) & 0x1f) << 1 | ((self.imm6 >> 5) & 0x1) << 0) << 26) as i32) >> 26
+    }
+}
+
+/// Opcodes with the `Imm6RdRs1` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub enum OpcodeImm6RdRs1 {
+    PvAddSciH,
+    PvAddSciB,
+    PvSubSciH,
+    PvSubSciB,
+    PvAvgSciH,
+    PvAvgSciB,
+    PvAvguSciH,
+    PvAvguSciB,
+    PvMinSciH,
+    PvMinSciB,
+    PvMinuSciH,
+    PvMinuSciB,
+    PvMaxSciH,
+    PvMaxSciB,
+    PvMaxuSciH,
+    PvMaxuSciB,
+    PvSrlSciH,
+    PvSrlSciB,
+    PvSraSciH,
+    PvSraSciB,
+    PvSllSciH,
+    PvSllSciB,
+    PvOrSciH,
+    PvOrSciB,
+    PvXorSciH,
+    PvXorSciB,
+    PvAndSciH,
+    PvAndSciB,
+    PvExtractH,
+    PvExtractB,
+    PvExtractuH,
+    PvExtractuB,
+    PvInsertH,
+    PvInsertB,
+    PvDotspSciH,
+    PvDotspSciB,
+    PvDotupSciH,
+    PvDotupSciB,
+    PvDotuspSciH,
+    PvDotuspSciB,
+    PvSdotspSciH,
+    PvSdotspSciB,
+    PvSdotupSciH,
+    PvSdotupSciB,
+    PvSdotuspSciH,
+    PvSdotuspSciB,
+    PvCmpeqSciH,
+    PvCmpeqSciB,
+    PvCmpneSciH,
+    PvCmpneSciB,
+    PvCmpgtSciH,
+    PvCmpgtSciB,
+    PvCmpgeSciH,
+    PvCmpgeSciB,
+    PvCmpltSciH,
+    PvCmpltSciB,
+    PvCmpleSciH,
+    PvCmpleSciB,
+    PvCmpgtuSciH,
+    PvCmpgtuSciB,
+    PvCmpgeuSciH,
+    PvCmpgeuSciB,
+    PvCmpltuSciH,
+    PvCmpltuSciB,
+    PvCmpleuSciH,
+    PvCmpleuSciB,
+    PvShuffleSciH,
+    PvShufflei0SciB,
+    PvShufflei1SciB,
+    PvShufflei2SciB,
+    PvShufflei3SciB,
+}
+
+impl std::fmt::Display for FormatImm6RdRs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.op)?;
+        write!(f, " imm6={:x}", self.imm6)?;
+        write!(f, " rd={:x}", self.rd)?;
+        write!(f, " rs1={:x}", self.rs1)?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for OpcodeImm6RdRs1 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::PvAddSciH => write!(f, "pv.add.sci.h"),
+            Self::PvAddSciB => write!(f, "pv.add.sci.b"),
+            Self::PvSubSciH => write!(f, "pv.sub.sci.h"),
+            Self::PvSubSciB => write!(f, "pv.sub.sci.b"),
+            Self::PvAvgSciH => write!(f, "pv.avg.sci.h"),
+            Self::PvAvgSciB => write!(f, "pv.avg.sci.b"),
+            Self::PvAvguSciH => write!(f, "pv.avgu.sci.h"),
+            Self::PvAvguSciB => write!(f, "pv.avgu.sci.b"),
+            Self::PvMinSciH => write!(f, "pv.min.sci.h"),
+            Self::PvMinSciB => write!(f, "pv.min.sci.b"),
+            Self::PvMinuSciH => write!(f, "pv.minu.sci.h"),
+            Self::PvMinuSciB => write!(f, "pv.minu.sci.b"),
+            Self::PvMaxSciH => write!(f, "pv.max.sci.h"),
+            Self::PvMaxSciB => write!(f, "pv.max.sci.b"),
+            Self::PvMaxuSciH => write!(f, "pv.maxu.sci.h"),
+            Self::PvMaxuSciB => write!(f, "pv.maxu.sci.b"),
+            Self::PvSrlSciH => write!(f, "pv.srl.sci.h"),
+            Self::PvSrlSciB => write!(f, "pv.srl.sci.b"),
+            Self::PvSraSciH => write!(f, "pv.sra.sci.h"),
+            Self::PvSraSciB => write!(f, "pv.sra.sci.b"),
+            Self::PvSllSciH => write!(f, "pv.sll.sci.h"),
+            Self::PvSllSciB => write!(f, "pv.sll.sci.b"),
+            Self::PvOrSciH => write!(f, "pv.or.sci.h"),
+            Self::PvOrSciB => write!(f, "pv.or.sci.b"),
+            Self::PvXorSciH => write!(f, "pv.xor.sci.h"),
+            Self::PvXorSciB => write!(f, "pv.xor.sci.b"),
+            Self::PvAndSciH => write!(f, "pv.and.sci.h"),
+            Self::PvAndSciB => write!(f, "pv.and.sci.b"),
+            Self::PvExtractH => write!(f, "pv.extract.h"),
+            Self::PvExtractB => write!(f, "pv.extract.b"),
+            Self::PvExtractuH => write!(f, "pv.extractu.h"),
+            Self::PvExtractuB => write!(f, "pv.extractu.b"),
+            Self::PvInsertH => write!(f, "pv.insert.h"),
+            Self::PvInsertB => write!(f, "pv.insert.b"),
+            Self::PvDotspSciH => write!(f, "pv.dotsp.sci.h"),
+            Self::PvDotspSciB => write!(f, "pv.dotsp.sci.b"),
+            Self::PvDotupSciH => write!(f, "pv.dotup.sci.h"),
+            Self::PvDotupSciB => write!(f, "pv.dotup.sci.b"),
+            Self::PvDotuspSciH => write!(f, "pv.dotusp.sci.h"),
+            Self::PvDotuspSciB => write!(f, "pv.dotusp.sci.b"),
+            Self::PvSdotspSciH => write!(f, "pv.sdotsp.sci.h"),
+            Self::PvSdotspSciB => write!(f, "pv.sdotsp.sci.b"),
+            Self::PvSdotupSciH => write!(f, "pv.sdotup.sci.h"),
+            Self::PvSdotupSciB => write!(f, "pv.sdotup.sci.b"),
+            Self::PvSdotuspSciH => write!(f, "pv.sdotusp.sci.h"),
+            Self::PvSdotuspSciB => write!(f, "pv.sdotusp.sci.b"),
+            Self::PvCmpeqSciH => write!(f, "pv.cmpeq.sci.h"),
+            Self::PvCmpeqSciB => write!(f, "pv.cmpeq.sci.b"),
+            Self::PvCmpneSciH => write!(f, "pv.cmpne.sci.h"),
+            Self::PvCmpneSciB => write!(f, "pv.cmpne.sci.b"),
+            Self::PvCmpgtSciH => write!(f, "pv.cmpgt.sci.h"),
+            Self::PvCmpgtSciB => write!(f, "pv.cmpgt.sci.b"),
+            Self::PvCmpgeSciH => write!(f, "pv.cmpge.sci.h"),
+            Self::PvCmpgeSciB => write!(f, "pv.cmpge.sci.b"),
+            Self::PvCmpltSciH => write!(f, "pv.cmplt.sci.h"),
+            Self::PvCmpltSciB => write!(f, "pv.cmplt.sci.b"),
+            Self::PvCmpleSciH => write!(f, "pv.cmple.sci.h"),
+            Self::PvCmpleSciB => write!(f, "pv.cmple.sci.b"),
+            Self::PvCmpgtuSciH => write!(f, "pv.cmpgtu.sci.h"),
+            Self::PvCmpgtuSciB => write!(f, "pv.cmpgtu.sci.b"),
+            Self::PvCmpgeuSciH => write!(f, "pv.cmpgeu.sci.h"),
+            Self::PvCmpgeuSciB => write!(f, "pv.cmpgeu.sci.b"),
+            Self::PvCmpltuSciH => write!(f, "pv.cmpltu.sci.h"),
+            Self::PvCmpltuSciB => write!(f, "pv.cmpltu.sci.b"),
+            Self::PvCmpleuSciH => write!(f, "pv.cmpleu.sci.h"),
+            Self::PvCmpleuSciB => write!(f, "pv.cmpleu.sci.b"),
+            Self::PvShuffleSciH => write!(f, "pv.shuffle.sci.h"),
+            Self::PvShufflei0SciB => write!(f, "pv.shufflei0.sci.b"),
+            Self::PvShufflei1SciB => write!(f, "pv.shufflei1.sci.b"),
+            Self::PvShufflei2SciB => write!(f, "pv.shufflei2.sci.b"),
+            Self::PvShufflei3SciB => write!(f, "pv.shufflei3.sci.b"),
         }
     }
 }
@@ -822,6 +1011,52 @@ impl std::fmt::Display for OpcodeJimm20Rd {
     }
 }
 
+/// The `Prs3Rs1Rs2` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub struct FormatPrs3Rs1Rs2 {
+    pub op: OpcodePrs3Rs1Rs2,
+    pub raw: u32,
+    pub prs3: u32,
+    pub rs1: u32,
+    pub rs2: u32,
+}
+
+impl FormatPrs3Rs1Rs2 {}
+
+/// Opcodes with the `Prs3Rs1Rs2` instruction format.
+#[derive(Debug, Copy, Clone)]
+pub enum OpcodePrs3Rs1Rs2 {
+    PSbRrpost,
+    PShRrpost,
+    PSwRrpost,
+    PSbRr,
+    PShRr,
+    PSwRr,
+}
+
+impl std::fmt::Display for FormatPrs3Rs1Rs2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.op)?;
+        write!(f, " prs3={:x}", self.prs3)?;
+        write!(f, " rs1={:x}", self.rs1)?;
+        write!(f, " rs2={:x}", self.rs2)?;
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for OpcodePrs3Rs1Rs2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::PSbRrpost => write!(f, "p.sb.rrpost"),
+            Self::PShRrpost => write!(f, "p.sh.rrpost"),
+            Self::PSwRrpost => write!(f, "p.sw.rrpost"),
+            Self::PSbRr => write!(f, "p.sb.rr"),
+            Self::PShRr => write!(f, "p.sh.rr"),
+            Self::PSwRr => write!(f, "p.sw.rr"),
+        }
+    }
+}
+
 /// The `RdRmRs1` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub struct FormatRdRmRs1 {
@@ -838,36 +1073,36 @@ impl FormatRdRmRs1 {}
 #[derive(Debug, Copy, Clone)]
 pub enum OpcodeRdRmRs1 {
     FsqrtS,
+    FcvtWS,
+    FcvtWuS,
+    FcvtSW,
+    FcvtSWu,
+    FcvtLS,
+    FcvtLuS,
+    FcvtSL,
+    FcvtSLu,
     FcvtSD,
     FcvtDS,
     FsqrtD,
+    FcvtWD,
+    FcvtWuD,
+    FcvtDW,
+    FcvtDWu,
+    FcvtLD,
+    FcvtLuD,
+    FcvtDL,
+    FcvtDLu,
     FcvtSQ,
     FcvtQS,
     FcvtDQ,
     FcvtQD,
     FsqrtQ,
-    FcvtWS,
-    FcvtWuS,
-    FcvtLS,
-    FcvtLuS,
-    FcvtWD,
-    FcvtWuD,
-    FcvtLD,
-    FcvtLuD,
     FcvtWQ,
     FcvtWuQ,
-    FcvtLQ,
-    FcvtLuQ,
-    FcvtSW,
-    FcvtSWu,
-    FcvtSL,
-    FcvtSLu,
-    FcvtDW,
-    FcvtDWu,
-    FcvtDL,
-    FcvtDLu,
     FcvtQW,
     FcvtQWu,
+    FcvtLQ,
+    FcvtLuQ,
     FcvtQL,
     FcvtQLu,
     FsqrtH,
@@ -899,36 +1134,36 @@ impl std::fmt::Display for OpcodeRdRmRs1 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             Self::FsqrtS => write!(f, "fsqrt.s"),
+            Self::FcvtWS => write!(f, "fcvt.w.s"),
+            Self::FcvtWuS => write!(f, "fcvt.wu.s"),
+            Self::FcvtSW => write!(f, "fcvt.s.w"),
+            Self::FcvtSWu => write!(f, "fcvt.s.wu"),
+            Self::FcvtLS => write!(f, "fcvt.l.s"),
+            Self::FcvtLuS => write!(f, "fcvt.lu.s"),
+            Self::FcvtSL => write!(f, "fcvt.s.l"),
+            Self::FcvtSLu => write!(f, "fcvt.s.lu"),
             Self::FcvtSD => write!(f, "fcvt.s.d"),
             Self::FcvtDS => write!(f, "fcvt.d.s"),
             Self::FsqrtD => write!(f, "fsqrt.d"),
+            Self::FcvtWD => write!(f, "fcvt.w.d"),
+            Self::FcvtWuD => write!(f, "fcvt.wu.d"),
+            Self::FcvtDW => write!(f, "fcvt.d.w"),
+            Self::FcvtDWu => write!(f, "fcvt.d.wu"),
+            Self::FcvtLD => write!(f, "fcvt.l.d"),
+            Self::FcvtLuD => write!(f, "fcvt.lu.d"),
+            Self::FcvtDL => write!(f, "fcvt.d.l"),
+            Self::FcvtDLu => write!(f, "fcvt.d.lu"),
             Self::FcvtSQ => write!(f, "fcvt.s.q"),
             Self::FcvtQS => write!(f, "fcvt.q.s"),
             Self::FcvtDQ => write!(f, "fcvt.d.q"),
             Self::FcvtQD => write!(f, "fcvt.q.d"),
             Self::FsqrtQ => write!(f, "fsqrt.q"),
-            Self::FcvtWS => write!(f, "fcvt.w.s"),
-            Self::FcvtWuS => write!(f, "fcvt.wu.s"),
-            Self::FcvtLS => write!(f, "fcvt.l.s"),
-            Self::FcvtLuS => write!(f, "fcvt.lu.s"),
-            Self::FcvtWD => write!(f, "fcvt.w.d"),
-            Self::FcvtWuD => write!(f, "fcvt.wu.d"),
-            Self::FcvtLD => write!(f, "fcvt.l.d"),
-            Self::FcvtLuD => write!(f, "fcvt.lu.d"),
             Self::FcvtWQ => write!(f, "fcvt.w.q"),
             Self::FcvtWuQ => write!(f, "fcvt.wu.q"),
-            Self::FcvtLQ => write!(f, "fcvt.l.q"),
-            Self::FcvtLuQ => write!(f, "fcvt.lu.q"),
-            Self::FcvtSW => write!(f, "fcvt.s.w"),
-            Self::FcvtSWu => write!(f, "fcvt.s.wu"),
-            Self::FcvtSL => write!(f, "fcvt.s.l"),
-            Self::FcvtSLu => write!(f, "fcvt.s.lu"),
-            Self::FcvtDW => write!(f, "fcvt.d.w"),
-            Self::FcvtDWu => write!(f, "fcvt.d.wu"),
-            Self::FcvtDL => write!(f, "fcvt.d.l"),
-            Self::FcvtDLu => write!(f, "fcvt.d.lu"),
             Self::FcvtQW => write!(f, "fcvt.q.w"),
             Self::FcvtQWu => write!(f, "fcvt.q.wu"),
+            Self::FcvtLQ => write!(f, "fcvt.l.q"),
+            Self::FcvtLuQ => write!(f, "fcvt.lu.q"),
             Self::FcvtQL => write!(f, "fcvt.q.l"),
             Self::FcvtQLu => write!(f, "fcvt.q.lu"),
             Self::FsqrtH => write!(f, "fsqrt.h"),
@@ -1108,26 +1343,33 @@ impl FormatRdRs1 {}
 /// Opcodes with the `RdRs1` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub enum OpcodeRdRs1 {
-    Clz,
-    Ctz,
-    Pcnt,
-    SextB,
-    SextH,
-    Crc32B,
-    Crc32H,
-    Crc32W,
-    Crc32cB,
-    Crc32cH,
-    Crc32cW,
+    HlvB,
+    HlvBu,
+    HlvH,
+    HlvHu,
+    HlvxHu,
+    HlvW,
+    HlvxWu,
+    HlvWu,
+    HlvD,
     FmvXW,
     FclassS,
-    FmvXD,
-    FclassD,
-    FmvXQ,
-    FclassQ,
     FmvWX,
+    FclassD,
+    FmvXD,
     FmvDX,
-    FmvQX,
+    FclassQ,
+    PAbs,
+    PExths,
+    PExthz,
+    PExtbs,
+    PExtbz,
+    PClb,
+    PFl1,
+    PFf1,
+    PRor,
+    PvAbsH,
+    PvAbsB,
     FmvXH,
     FclassH,
     FmvHX,
@@ -1199,26 +1441,33 @@ impl std::fmt::Display for FormatRdRs1 {
 impl std::fmt::Display for OpcodeRdRs1 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::Clz => write!(f, "clz"),
-            Self::Ctz => write!(f, "ctz"),
-            Self::Pcnt => write!(f, "pcnt"),
-            Self::SextB => write!(f, "sext.b"),
-            Self::SextH => write!(f, "sext.h"),
-            Self::Crc32B => write!(f, "crc32.b"),
-            Self::Crc32H => write!(f, "crc32.h"),
-            Self::Crc32W => write!(f, "crc32.w"),
-            Self::Crc32cB => write!(f, "crc32c.b"),
-            Self::Crc32cH => write!(f, "crc32c.h"),
-            Self::Crc32cW => write!(f, "crc32c.w"),
+            Self::HlvB => write!(f, "hlv.b"),
+            Self::HlvBu => write!(f, "hlv.bu"),
+            Self::HlvH => write!(f, "hlv.h"),
+            Self::HlvHu => write!(f, "hlv.hu"),
+            Self::HlvxHu => write!(f, "hlvx.hu"),
+            Self::HlvW => write!(f, "hlv.w"),
+            Self::HlvxWu => write!(f, "hlvx.wu"),
+            Self::HlvWu => write!(f, "hlv.wu"),
+            Self::HlvD => write!(f, "hlv.d"),
             Self::FmvXW => write!(f, "fmv.x.w"),
             Self::FclassS => write!(f, "fclass.s"),
-            Self::FmvXD => write!(f, "fmv.x.d"),
-            Self::FclassD => write!(f, "fclass.d"),
-            Self::FmvXQ => write!(f, "fmv.x.q"),
-            Self::FclassQ => write!(f, "fclass.q"),
             Self::FmvWX => write!(f, "fmv.w.x"),
+            Self::FclassD => write!(f, "fclass.d"),
+            Self::FmvXD => write!(f, "fmv.x.d"),
             Self::FmvDX => write!(f, "fmv.d.x"),
-            Self::FmvQX => write!(f, "fmv.q.x"),
+            Self::FclassQ => write!(f, "fclass.q"),
+            Self::PAbs => write!(f, "p.abs"),
+            Self::PExths => write!(f, "p.exths"),
+            Self::PExthz => write!(f, "p.exthz"),
+            Self::PExtbs => write!(f, "p.extbs"),
+            Self::PExtbz => write!(f, "p.extbz"),
+            Self::PClb => write!(f, "p.clb"),
+            Self::PFl1 => write!(f, "p.fl1"),
+            Self::PFf1 => write!(f, "p.ff1"),
+            Self::PRor => write!(f, "p.ror"),
+            Self::PvAbsH => write!(f, "pv.abs.h"),
+            Self::PvAbsB => write!(f, "pv.abs.b"),
             Self::FmvXH => write!(f, "fmv.x.h"),
             Self::FclassH => write!(f, "fclass.h"),
             Self::FmvHX => write!(f, "fmv.h.x"),
@@ -1323,62 +1572,190 @@ pub enum OpcodeRdRs1Rs2 {
     Divuw,
     Remw,
     Remuw,
-    Andn,
-    Orn,
-    Xnor,
-    Slo,
-    Sro,
-    Rol,
-    Ror,
-    Sbclr,
-    Sbset,
-    Sbinv,
-    Sbext,
-    Gorc,
-    Grev,
-    Sh1add,
-    Sh2add,
-    Sh3add,
-    Clmul,
-    Clmulr,
-    Clmulh,
-    Min,
-    Max,
-    Minu,
-    Maxu,
-    Shfl,
-    Unshfl,
-    Bext,
-    Bdep,
-    Pack,
-    Packu,
-    Packh,
-    Bfp,
     FsgnjS,
     FsgnjnS,
     FsgnjxS,
     FminS,
     FmaxS,
+    FleS,
+    FltS,
+    FeqS,
     FsgnjD,
     FsgnjnD,
     FsgnjxD,
     FminD,
     FmaxD,
+    FleD,
+    FltD,
+    FeqD,
     FsgnjQ,
     FsgnjnQ,
     FsgnjxQ,
     FminQ,
     FmaxQ,
-    FleS,
-    FltS,
-    FeqS,
-    FleD,
-    FltD,
-    FeqD,
     FleQ,
     FltQ,
     FeqQ,
-    Dmcpy,
+    PExtractr,
+    PExtractur,
+    PInsertr,
+    PBsetr,
+    PBclrr,
+    PCnt,
+    PClipr,
+    PClipur,
+    PMac,
+    PMsu,
+    PMin,
+    PMinu,
+    PMax,
+    PMaxu,
+    PLbRrpost,
+    PLbuRrpost,
+    PLhRrpost,
+    PLhuRrpost,
+    PLwRrpost,
+    PLbRr,
+    PLbuRr,
+    PLhRr,
+    PLhuRr,
+    PLwRr,
+    PSlet,
+    PSletu,
+    PvAddH,
+    PvAddScH,
+    PvAddB,
+    PvAddScB,
+    PvSubH,
+    PvSubScH,
+    PvSubB,
+    PvSubScB,
+    PvAvgH,
+    PvAvgScH,
+    PvAvgB,
+    PvAvgScB,
+    PvAvguH,
+    PvAvguScH,
+    PvAvguB,
+    PvAvguScB,
+    PvMinH,
+    PvMinScH,
+    PvMinB,
+    PvMinScB,
+    PvMinuH,
+    PvMinuScH,
+    PvMinuB,
+    PvMinuScB,
+    PvMaxH,
+    PvMaxScH,
+    PvMaxB,
+    PvMaxScB,
+    PvMaxuH,
+    PvMaxuScH,
+    PvMaxuB,
+    PvMaxuScB,
+    PvSrlH,
+    PvSrlScH,
+    PvSrlB,
+    PvSrlScB,
+    PvSraH,
+    PvSraScH,
+    PvSraB,
+    PvSraScB,
+    PvSllH,
+    PvSllScH,
+    PvSllB,
+    PvSllScB,
+    PvOrH,
+    PvOrScH,
+    PvOrB,
+    PvOrScB,
+    PvXorH,
+    PvXorScH,
+    PvXorB,
+    PvXorScB,
+    PvAndH,
+    PvAndScH,
+    PvAndB,
+    PvAndScB,
+    PvDotspH,
+    PvDotspScH,
+    PvDotspB,
+    PvDotspScB,
+    PvDotupH,
+    PvDotupScH,
+    PvDotupB,
+    PvDotupScB,
+    PvDotuspH,
+    PvDotuspScH,
+    PvDotuspB,
+    PvDotuspScB,
+    PvSdotspH,
+    PvSdotspScH,
+    PvSdotspB,
+    PvSdotspScB,
+    PvSdotupH,
+    PvSdotupScH,
+    PvSdotupB,
+    PvSdotupScB,
+    PvSdotuspH,
+    PvSdotuspScH,
+    PvSdotuspB,
+    PvSdotuspScB,
+    PvCmpeqH,
+    PvCmpeqScH,
+    PvCmpeqB,
+    PvCmpeqScB,
+    PvCmpneH,
+    PvCmpneScH,
+    PvCmpneB,
+    PvCmpneScB,
+    PvCmpgtH,
+    PvCmpgtScH,
+    PvCmpgtB,
+    PvCmpgtScB,
+    PvCmpgeH,
+    PvCmpgeScH,
+    PvCmpgeB,
+    PvCmpgeScB,
+    PvCmpltH,
+    PvCmpltScH,
+    PvCmpltB,
+    PvCmpltScB,
+    PvCmpleH,
+    PvCmpleScH,
+    PvCmpleB,
+    PvCmpleScB,
+    PvCmpgtuH,
+    PvCmpgtuScH,
+    PvCmpgtuB,
+    PvCmpgtuScB,
+    PvCmpgeuH,
+    PvCmpgeuScH,
+    PvCmpgeuB,
+    PvCmpgeuScB,
+    PvCmpltuH,
+    PvCmpltuScH,
+    PvCmpltuB,
+    PvCmpltuScB,
+    PvCmpleuH,
+    PvCmpleuScH,
+    PvCmpleuB,
+    PvCmpleuScB,
+    PvAddHDiv2,
+    PvAddHDiv4,
+    PvAddHDiv8,
+    PvSubHDiv2,
+    PvSubHDiv4,
+    PvSubHDiv8,
+    PvShuffleH,
+    PvShuffleB,
+    PvShuffle2H,
+    PvShuffle2B,
+    PvPack,
+    PvPackH,
+    PvPackhiB,
+    PvPackloB,
     FsgnjH,
     FsgnjnH,
     FsgnjxH,
@@ -1564,62 +1941,190 @@ impl std::fmt::Display for OpcodeRdRs1Rs2 {
             Self::Divuw => write!(f, "divuw"),
             Self::Remw => write!(f, "remw"),
             Self::Remuw => write!(f, "remuw"),
-            Self::Andn => write!(f, "andn"),
-            Self::Orn => write!(f, "orn"),
-            Self::Xnor => write!(f, "xnor"),
-            Self::Slo => write!(f, "slo"),
-            Self::Sro => write!(f, "sro"),
-            Self::Rol => write!(f, "rol"),
-            Self::Ror => write!(f, "ror"),
-            Self::Sbclr => write!(f, "sbclr"),
-            Self::Sbset => write!(f, "sbset"),
-            Self::Sbinv => write!(f, "sbinv"),
-            Self::Sbext => write!(f, "sbext"),
-            Self::Gorc => write!(f, "gorc"),
-            Self::Grev => write!(f, "grev"),
-            Self::Sh1add => write!(f, "sh1add"),
-            Self::Sh2add => write!(f, "sh2add"),
-            Self::Sh3add => write!(f, "sh3add"),
-            Self::Clmul => write!(f, "clmul"),
-            Self::Clmulr => write!(f, "clmulr"),
-            Self::Clmulh => write!(f, "clmulh"),
-            Self::Min => write!(f, "min"),
-            Self::Max => write!(f, "max"),
-            Self::Minu => write!(f, "minu"),
-            Self::Maxu => write!(f, "maxu"),
-            Self::Shfl => write!(f, "shfl"),
-            Self::Unshfl => write!(f, "unshfl"),
-            Self::Bext => write!(f, "bext"),
-            Self::Bdep => write!(f, "bdep"),
-            Self::Pack => write!(f, "pack"),
-            Self::Packu => write!(f, "packu"),
-            Self::Packh => write!(f, "packh"),
-            Self::Bfp => write!(f, "bfp"),
             Self::FsgnjS => write!(f, "fsgnj.s"),
             Self::FsgnjnS => write!(f, "fsgnjn.s"),
             Self::FsgnjxS => write!(f, "fsgnjx.s"),
             Self::FminS => write!(f, "fmin.s"),
             Self::FmaxS => write!(f, "fmax.s"),
+            Self::FleS => write!(f, "fle.s"),
+            Self::FltS => write!(f, "flt.s"),
+            Self::FeqS => write!(f, "feq.s"),
             Self::FsgnjD => write!(f, "fsgnj.d"),
             Self::FsgnjnD => write!(f, "fsgnjn.d"),
             Self::FsgnjxD => write!(f, "fsgnjx.d"),
             Self::FminD => write!(f, "fmin.d"),
             Self::FmaxD => write!(f, "fmax.d"),
+            Self::FleD => write!(f, "fle.d"),
+            Self::FltD => write!(f, "flt.d"),
+            Self::FeqD => write!(f, "feq.d"),
             Self::FsgnjQ => write!(f, "fsgnj.q"),
             Self::FsgnjnQ => write!(f, "fsgnjn.q"),
             Self::FsgnjxQ => write!(f, "fsgnjx.q"),
             Self::FminQ => write!(f, "fmin.q"),
             Self::FmaxQ => write!(f, "fmax.q"),
-            Self::FleS => write!(f, "fle.s"),
-            Self::FltS => write!(f, "flt.s"),
-            Self::FeqS => write!(f, "feq.s"),
-            Self::FleD => write!(f, "fle.d"),
-            Self::FltD => write!(f, "flt.d"),
-            Self::FeqD => write!(f, "feq.d"),
             Self::FleQ => write!(f, "fle.q"),
             Self::FltQ => write!(f, "flt.q"),
             Self::FeqQ => write!(f, "feq.q"),
-            Self::Dmcpy => write!(f, "dmcpy"),
+            Self::PExtractr => write!(f, "p.extractr"),
+            Self::PExtractur => write!(f, "p.extractur"),
+            Self::PInsertr => write!(f, "p.insertr"),
+            Self::PBsetr => write!(f, "p.bsetr"),
+            Self::PBclrr => write!(f, "p.bclrr"),
+            Self::PCnt => write!(f, "p.cnt"),
+            Self::PClipr => write!(f, "p.clipr"),
+            Self::PClipur => write!(f, "p.clipur"),
+            Self::PMac => write!(f, "p.mac"),
+            Self::PMsu => write!(f, "p.msu"),
+            Self::PMin => write!(f, "p.min"),
+            Self::PMinu => write!(f, "p.minu"),
+            Self::PMax => write!(f, "p.max"),
+            Self::PMaxu => write!(f, "p.maxu"),
+            Self::PLbRrpost => write!(f, "p.lb.rrpost"),
+            Self::PLbuRrpost => write!(f, "p.lbu.rrpost"),
+            Self::PLhRrpost => write!(f, "p.lh.rrpost"),
+            Self::PLhuRrpost => write!(f, "p.lhu.rrpost"),
+            Self::PLwRrpost => write!(f, "p.lw.rrpost"),
+            Self::PLbRr => write!(f, "p.lb.rr"),
+            Self::PLbuRr => write!(f, "p.lbu.rr"),
+            Self::PLhRr => write!(f, "p.lh.rr"),
+            Self::PLhuRr => write!(f, "p.lhu.rr"),
+            Self::PLwRr => write!(f, "p.lw.rr"),
+            Self::PSlet => write!(f, "p.slet"),
+            Self::PSletu => write!(f, "p.sletu"),
+            Self::PvAddH => write!(f, "pv.add.h"),
+            Self::PvAddScH => write!(f, "pv.add.sc.h"),
+            Self::PvAddB => write!(f, "pv.add.b"),
+            Self::PvAddScB => write!(f, "pv.add.sc.b"),
+            Self::PvSubH => write!(f, "pv.sub.h"),
+            Self::PvSubScH => write!(f, "pv.sub.sc.h"),
+            Self::PvSubB => write!(f, "pv.sub.b"),
+            Self::PvSubScB => write!(f, "pv.sub.sc.b"),
+            Self::PvAvgH => write!(f, "pv.avg.h"),
+            Self::PvAvgScH => write!(f, "pv.avg.sc.h"),
+            Self::PvAvgB => write!(f, "pv.avg.b"),
+            Self::PvAvgScB => write!(f, "pv.avg.sc.b"),
+            Self::PvAvguH => write!(f, "pv.avgu.h"),
+            Self::PvAvguScH => write!(f, "pv.avgu.sc.h"),
+            Self::PvAvguB => write!(f, "pv.avgu.b"),
+            Self::PvAvguScB => write!(f, "pv.avgu.sc.b"),
+            Self::PvMinH => write!(f, "pv.min.h"),
+            Self::PvMinScH => write!(f, "pv.min.sc.h"),
+            Self::PvMinB => write!(f, "pv.min.b"),
+            Self::PvMinScB => write!(f, "pv.min.sc.b"),
+            Self::PvMinuH => write!(f, "pv.minu.h"),
+            Self::PvMinuScH => write!(f, "pv.minu.sc.h"),
+            Self::PvMinuB => write!(f, "pv.minu.b"),
+            Self::PvMinuScB => write!(f, "pv.minu.sc.b"),
+            Self::PvMaxH => write!(f, "pv.max.h"),
+            Self::PvMaxScH => write!(f, "pv.max.sc.h"),
+            Self::PvMaxB => write!(f, "pv.max.b"),
+            Self::PvMaxScB => write!(f, "pv.max.sc.b"),
+            Self::PvMaxuH => write!(f, "pv.maxu.h"),
+            Self::PvMaxuScH => write!(f, "pv.maxu.sc.h"),
+            Self::PvMaxuB => write!(f, "pv.maxu.b"),
+            Self::PvMaxuScB => write!(f, "pv.maxu.sc.b"),
+            Self::PvSrlH => write!(f, "pv.srl.h"),
+            Self::PvSrlScH => write!(f, "pv.srl.sc.h"),
+            Self::PvSrlB => write!(f, "pv.srl.b"),
+            Self::PvSrlScB => write!(f, "pv.srl.sc.b"),
+            Self::PvSraH => write!(f, "pv.sra.h"),
+            Self::PvSraScH => write!(f, "pv.sra.sc.h"),
+            Self::PvSraB => write!(f, "pv.sra.b"),
+            Self::PvSraScB => write!(f, "pv.sra.sc.b"),
+            Self::PvSllH => write!(f, "pv.sll.h"),
+            Self::PvSllScH => write!(f, "pv.sll.sc.h"),
+            Self::PvSllB => write!(f, "pv.sll.b"),
+            Self::PvSllScB => write!(f, "pv.sll.sc.b"),
+            Self::PvOrH => write!(f, "pv.or.h"),
+            Self::PvOrScH => write!(f, "pv.or.sc.h"),
+            Self::PvOrB => write!(f, "pv.or.b"),
+            Self::PvOrScB => write!(f, "pv.or.sc.b"),
+            Self::PvXorH => write!(f, "pv.xor.h"),
+            Self::PvXorScH => write!(f, "pv.xor.sc.h"),
+            Self::PvXorB => write!(f, "pv.xor.b"),
+            Self::PvXorScB => write!(f, "pv.xor.sc.b"),
+            Self::PvAndH => write!(f, "pv.and.h"),
+            Self::PvAndScH => write!(f, "pv.and.sc.h"),
+            Self::PvAndB => write!(f, "pv.and.b"),
+            Self::PvAndScB => write!(f, "pv.and.sc.b"),
+            Self::PvDotspH => write!(f, "pv.dotsp.h"),
+            Self::PvDotspScH => write!(f, "pv.dotsp.sc.h"),
+            Self::PvDotspB => write!(f, "pv.dotsp.b"),
+            Self::PvDotspScB => write!(f, "pv.dotsp.sc.b"),
+            Self::PvDotupH => write!(f, "pv.dotup.h"),
+            Self::PvDotupScH => write!(f, "pv.dotup.sc.h"),
+            Self::PvDotupB => write!(f, "pv.dotup.b"),
+            Self::PvDotupScB => write!(f, "pv.dotup.sc.b"),
+            Self::PvDotuspH => write!(f, "pv.dotusp.h"),
+            Self::PvDotuspScH => write!(f, "pv.dotusp.sc.h"),
+            Self::PvDotuspB => write!(f, "pv.dotusp.b"),
+            Self::PvDotuspScB => write!(f, "pv.dotusp.sc.b"),
+            Self::PvSdotspH => write!(f, "pv.sdotsp.h"),
+            Self::PvSdotspScH => write!(f, "pv.sdotsp.sc.h"),
+            Self::PvSdotspB => write!(f, "pv.sdotsp.b"),
+            Self::PvSdotspScB => write!(f, "pv.sdotsp.sc.b"),
+            Self::PvSdotupH => write!(f, "pv.sdotup.h"),
+            Self::PvSdotupScH => write!(f, "pv.sdotup.sc.h"),
+            Self::PvSdotupB => write!(f, "pv.sdotup.b"),
+            Self::PvSdotupScB => write!(f, "pv.sdotup.sc.b"),
+            Self::PvSdotuspH => write!(f, "pv.sdotusp.h"),
+            Self::PvSdotuspScH => write!(f, "pv.sdotusp.sc.h"),
+            Self::PvSdotuspB => write!(f, "pv.sdotusp.b"),
+            Self::PvSdotuspScB => write!(f, "pv.sdotusp.sc.b"),
+            Self::PvCmpeqH => write!(f, "pv.cmpeq.h"),
+            Self::PvCmpeqScH => write!(f, "pv.cmpeq.sc.h"),
+            Self::PvCmpeqB => write!(f, "pv.cmpeq.b"),
+            Self::PvCmpeqScB => write!(f, "pv.cmpeq.sc.b"),
+            Self::PvCmpneH => write!(f, "pv.cmpne.h"),
+            Self::PvCmpneScH => write!(f, "pv.cmpne.sc.h"),
+            Self::PvCmpneB => write!(f, "pv.cmpne.b"),
+            Self::PvCmpneScB => write!(f, "pv.cmpne.sc.b"),
+            Self::PvCmpgtH => write!(f, "pv.cmpgt.h"),
+            Self::PvCmpgtScH => write!(f, "pv.cmpgt.sc.h"),
+            Self::PvCmpgtB => write!(f, "pv.cmpgt.b"),
+            Self::PvCmpgtScB => write!(f, "pv.cmpgt.sc.b"),
+            Self::PvCmpgeH => write!(f, "pv.cmpge.h"),
+            Self::PvCmpgeScH => write!(f, "pv.cmpge.sc.h"),
+            Self::PvCmpgeB => write!(f, "pv.cmpge.b"),
+            Self::PvCmpgeScB => write!(f, "pv.cmpge.sc.b"),
+            Self::PvCmpltH => write!(f, "pv.cmplt.h"),
+            Self::PvCmpltScH => write!(f, "pv.cmplt.sc.h"),
+            Self::PvCmpltB => write!(f, "pv.cmplt.b"),
+            Self::PvCmpltScB => write!(f, "pv.cmplt.sc.b"),
+            Self::PvCmpleH => write!(f, "pv.cmple.h"),
+            Self::PvCmpleScH => write!(f, "pv.cmple.sc.h"),
+            Self::PvCmpleB => write!(f, "pv.cmple.b"),
+            Self::PvCmpleScB => write!(f, "pv.cmple.sc.b"),
+            Self::PvCmpgtuH => write!(f, "pv.cmpgtu.h"),
+            Self::PvCmpgtuScH => write!(f, "pv.cmpgtu.sc.h"),
+            Self::PvCmpgtuB => write!(f, "pv.cmpgtu.b"),
+            Self::PvCmpgtuScB => write!(f, "pv.cmpgtu.sc.b"),
+            Self::PvCmpgeuH => write!(f, "pv.cmpgeu.h"),
+            Self::PvCmpgeuScH => write!(f, "pv.cmpgeu.sc.h"),
+            Self::PvCmpgeuB => write!(f, "pv.cmpgeu.b"),
+            Self::PvCmpgeuScB => write!(f, "pv.cmpgeu.sc.b"),
+            Self::PvCmpltuH => write!(f, "pv.cmpltu.h"),
+            Self::PvCmpltuScH => write!(f, "pv.cmpltu.sc.h"),
+            Self::PvCmpltuB => write!(f, "pv.cmpltu.b"),
+            Self::PvCmpltuScB => write!(f, "pv.cmpltu.sc.b"),
+            Self::PvCmpleuH => write!(f, "pv.cmpleu.h"),
+            Self::PvCmpleuScH => write!(f, "pv.cmpleu.sc.h"),
+            Self::PvCmpleuB => write!(f, "pv.cmpleu.b"),
+            Self::PvCmpleuScB => write!(f, "pv.cmpleu.sc.b"),
+            Self::PvAddHDiv2 => write!(f, "pv.add.h.div2"),
+            Self::PvAddHDiv4 => write!(f, "pv.add.h.div4"),
+            Self::PvAddHDiv8 => write!(f, "pv.add.h.div8"),
+            Self::PvSubHDiv2 => write!(f, "pv.sub.h.div2"),
+            Self::PvSubHDiv4 => write!(f, "pv.sub.h.div4"),
+            Self::PvSubHDiv8 => write!(f, "pv.sub.h.div8"),
+            Self::PvShuffleH => write!(f, "pv.shuffle.h"),
+            Self::PvShuffleB => write!(f, "pv.shuffle.b"),
+            Self::PvShuffle2H => write!(f, "pv.shuffle2.h"),
+            Self::PvShuffle2B => write!(f, "pv.shuffle2.b"),
+            Self::PvPack => write!(f, "pv.pack"),
+            Self::PvPackH => write!(f, "pv.pack.h"),
+            Self::PvPackhiB => write!(f, "pv.packhi.b"),
+            Self::PvPackloB => write!(f, "pv.packlo.b"),
             Self::FsgnjH => write!(f, "fsgnj.h"),
             Self::FsgnjnH => write!(f, "fsgnjn.h"),
             Self::FsgnjxH => write!(f, "fsgnjx.h"),
@@ -1766,88 +2271,6 @@ impl std::fmt::Display for OpcodeRdRs1Rs2 {
     }
 }
 
-/// The `RdRs1Rs2Rs3` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatRdRs1Rs2Rs3 {
-    pub op: OpcodeRdRs1Rs2Rs3,
-    pub raw: u32,
-    pub rd: u32,
-    pub rs1: u32,
-    pub rs2: u32,
-    pub rs3: u32,
-}
-
-impl FormatRdRs1Rs2Rs3 {}
-
-/// Opcodes with the `RdRs1Rs2Rs3` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeRdRs1Rs2Rs3 {
-    Cmix,
-    Cmov,
-    Fsl,
-    Fsr,
-}
-
-impl std::fmt::Display for FormatRdRs1Rs2Rs3 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " rd={:x}", self.rd)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        write!(f, " rs2={:x}", self.rs2)?;
-        write!(f, " rs3={:x}", self.rs3)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeRdRs1Rs2Rs3 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Cmix => write!(f, "cmix"),
-            Self::Cmov => write!(f, "cmov"),
-            Self::Fsl => write!(f, "fsl"),
-            Self::Fsr => write!(f, "fsr"),
-        }
-    }
-}
-
-/// The `RdRs1Rs3Shamt` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatRdRs1Rs3Shamt {
-    pub op: OpcodeRdRs1Rs3Shamt,
-    pub raw: u32,
-    pub rd: u32,
-    pub rs1: u32,
-    pub rs3: u32,
-    pub shamt: u32,
-}
-
-impl FormatRdRs1Rs3Shamt {}
-
-/// Opcodes with the `RdRs1Rs3Shamt` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeRdRs1Rs3Shamt {
-    Fsri,
-}
-
-impl std::fmt::Display for FormatRdRs1Rs3Shamt {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " rd={:x}", self.rd)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        write!(f, " rs3={:x}", self.rs3)?;
-        write!(f, " shamt={:x}", self.shamt)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeRdRs1Rs3Shamt {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Fsri => write!(f, "fsri"),
-        }
-    }
-}
-
 /// The `RdRs1Shamt` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub struct FormatRdRs1Shamt {
@@ -1866,15 +2289,6 @@ pub enum OpcodeRdRs1Shamt {
     Slli,
     Srli,
     Srai,
-    Sloi,
-    Sroi,
-    Rori,
-    Sbclri,
-    Sbseti,
-    Sbinvi,
-    Sbexti,
-    Gorci,
-    Grevi,
 }
 
 impl std::fmt::Display for FormatRdRs1Shamt {
@@ -1893,15 +2307,6 @@ impl std::fmt::Display for OpcodeRdRs1Shamt {
             Self::Slli => write!(f, "slli"),
             Self::Srli => write!(f, "srli"),
             Self::Srai => write!(f, "srai"),
-            Self::Sloi => write!(f, "sloi"),
-            Self::Sroi => write!(f, "sroi"),
-            Self::Rori => write!(f, "rori"),
-            Self::Sbclri => write!(f, "sbclri"),
-            Self::Sbseti => write!(f, "sbseti"),
-            Self::Sbinvi => write!(f, "sbinvi"),
-            Self::Sbexti => write!(f, "sbexti"),
-            Self::Gorci => write!(f, "gorci"),
-            Self::Grevi => write!(f, "grevi"),
         }
     }
 }
@@ -1924,8 +2329,6 @@ pub enum OpcodeRdRs1Shamtw {
     Slliw,
     Srliw,
     Sraiw,
-    Shfli,
-    Unshfli,
 }
 
 impl std::fmt::Display for FormatRdRs1Shamtw {
@@ -1944,76 +2347,6 @@ impl std::fmt::Display for OpcodeRdRs1Shamtw {
             Self::Slliw => write!(f, "slliw"),
             Self::Srliw => write!(f, "srliw"),
             Self::Sraiw => write!(f, "sraiw"),
-            Self::Shfli => write!(f, "shfli"),
-            Self::Unshfli => write!(f, "unshfli"),
-        }
-    }
-}
-
-/// The `RdRs2` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatRdRs2 {
-    pub op: OpcodeRdRs2,
-    pub raw: u32,
-    pub rd: u32,
-    pub rs2: u32,
-}
-
-impl FormatRdRs2 {}
-
-/// Opcodes with the `RdRs2` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeRdRs2 {
-    Dmstat,
-    Scfgr,
-}
-
-impl std::fmt::Display for FormatRdRs2 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " rd={:x}", self.rd)?;
-        write!(f, " rs2={:x}", self.rs2)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeRdRs2 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Dmstat => write!(f, "dmstat"),
-            Self::Scfgr => write!(f, "scfgr"),
-        }
-    }
-}
-
-/// The `Rs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub struct FormatRs1 {
-    pub op: OpcodeRs1,
-    pub raw: u32,
-    pub rs1: u32,
-}
-
-impl FormatRs1 {}
-
-/// Opcodes with the `Rs1` instruction format.
-#[derive(Debug, Copy, Clone)]
-pub enum OpcodeRs1 {
-    Dmrep,
-}
-
-impl std::fmt::Display for FormatRs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.op)?;
-        write!(f, " rs1={:x}", self.rs1)?;
-        Ok(())
-    }
-}
-
-impl std::fmt::Display for OpcodeRs1 {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            Self::Dmrep => write!(f, "dmrep"),
         }
     }
 }
@@ -2032,13 +2365,13 @@ impl FormatRs1Rs2 {}
 /// Opcodes with the `Rs1Rs2` instruction format.
 #[derive(Debug, Copy, Clone)]
 pub enum OpcodeRs1Rs2 {
-    SfenceVma,
-    HfenceBvma,
+    HfenceVvma,
     HfenceGvma,
-    Dmsrc,
-    Dmdst,
-    Dmstr,
-    Scfgw,
+    HsvB,
+    HsvH,
+    HsvW,
+    HsvD,
+    SfenceVma,
 }
 
 impl std::fmt::Display for FormatRs1Rs2 {
@@ -2053,13 +2386,13 @@ impl std::fmt::Display for FormatRs1Rs2 {
 impl std::fmt::Display for OpcodeRs1Rs2 {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            Self::SfenceVma => write!(f, "sfence.vma"),
-            Self::HfenceBvma => write!(f, "hfence.bvma"),
+            Self::HfenceVvma => write!(f, "hfence.vvma"),
             Self::HfenceGvma => write!(f, "hfence.gvma"),
-            Self::Dmsrc => write!(f, "dmsrc"),
-            Self::Dmdst => write!(f, "dmdst"),
-            Self::Dmstr => write!(f, "dmstr"),
-            Self::Scfgw => write!(f, "scfgw"),
+            Self::HsvB => write!(f, "hsv.b"),
+            Self::HsvH => write!(f, "hsv.h"),
+            Self::HsvW => write!(f, "hsv.w"),
+            Self::HsvD => write!(f, "hsv.d"),
+            Self::SfenceVma => write!(f, "sfence.vma"),
         }
     }
 }
@@ -2070,22 +2403,6 @@ pub fn parse_u32(raw: u32) -> Format {
         0x6f => return parse_jimm20_rd(OpcodeJimm20Rd::Jal, raw),
         0x37 => return parse_imm20_rd(OpcodeImm20Rd::Lui, raw),
         0x17 => return parse_imm20_rd(OpcodeImm20Rd::Auipc, raw),
-        0x3f => return parse_imm12_rd_rm_rs1(OpcodeImm12RdRmRs1::Irep, raw),
-        _ => (),
-    }
-    match raw & 0xff {
-        0x8b => {
-            return parse_imm12_rs1_stagger_mask_stagger_max(
-                OpcodeImm12Rs1StaggerMaskStaggerMax::FrepO,
-                raw,
-            )
-        }
-        0xb => {
-            return parse_imm12_rs1_stagger_mask_stagger_max(
-                OpcodeImm12Rs1StaggerMaskStaggerMax::FrepI,
-                raw,
-            )
-        }
         _ => (),
     }
     match raw & 0x707f {
@@ -2102,48 +2419,94 @@ pub fn parse_u32(raw: u32) -> Format {
         0x4013 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Xori, raw),
         0x6013 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Ori, raw),
         0x7013 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Andi, raw),
-        0x1b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Addiw, raw),
         0x3 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lb, raw),
         0x1003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lh, raw),
         0x2003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lw, raw),
-        0x3003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Ld, raw),
         0x4003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lbu, raw),
         0x5003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lhu, raw),
-        0x6003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lwu, raw),
         0x23 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Sb, raw),
         0x1023 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Sh, raw),
         0x2023 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Sw, raw),
-        0x3023 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Sd, raw),
         0xf => return parse_fm_pred_rd_rs1_succ(OpcodeFmPredRdRs1Succ::Fence, raw),
         0x100f => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::FenceI, raw),
+        0x1b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Addiw, raw),
+        0x3003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Ld, raw),
+        0x6003 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Lwu, raw),
+        0x3023 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Sd, raw),
+        0x2007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flw, raw),
+        0x2027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsw, raw),
+        0x3007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Fld, raw),
+        0x3027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsd, raw),
+        0x4007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flq, raw),
+        0x4027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsq, raw),
         0x1073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrw, raw),
         0x2073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrs, raw),
         0x3073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrc, raw),
         0x5073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrwi, raw),
         0x6073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrsi, raw),
         0x7073 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Csrrci, raw),
-        0x2007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flw, raw),
-        0x3007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Fld, raw),
-        0x4007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flq, raw),
-        0x2027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsw, raw),
-        0x3027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsd, raw),
-        0x4027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsq, raw),
+        0x2063 => {
+            return parse_bimm12hi_bimm12lo_imm5_rs1(OpcodeBimm12hiBimm12loImm5Rs1::PBeqimm, raw)
+        }
+        0x3063 => {
+            return parse_bimm12hi_bimm12lo_imm5_rs1(OpcodeBimm12hiBimm12loImm5Rs1::PBneimm, raw)
+        }
+        0xb => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::PLbIrpost, raw),
+        0x400b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::PLbuIrpost, raw),
+        0x100b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::PLhIrpost, raw),
+        0x500b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::PLhuIrpost, raw),
+        0x200b => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::PLwIrpost, raw),
+        0x2b => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::PSbIrpost, raw),
+        0x102b => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::PShIrpost, raw),
+        0x202b => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::PSwIrpost, raw),
         0x1007 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flh, raw),
         0x1027 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsh, raw),
         0x7 => return parse_imm12_rd_rs1(OpcodeImm12RdRs1::Flb, raw),
         0x27 => return parse_imm12hi_imm12lo_rs1_rs2(OpcodeImm12hiImm12loRs1Rs2::Fsb, raw),
         _ => (),
     }
-    match raw & 0x7fff {
-        0x202b => return parse_imm12_rs1(OpcodeImm12Rs1::Scfgwi, raw),
+    match raw & 0xe003 {
+        0x0 => return parse_unit(OpcodeUnit::CAddi4spn, raw),
+        0x2000 => return parse_unit(OpcodeUnit::CFld, raw),
+        0x4000 => return parse_unit(OpcodeUnit::CLw, raw),
+        0x6000 => return parse_unit(OpcodeUnit::CFlw, raw),
+        0xa000 => return parse_unit(OpcodeUnit::CFsd, raw),
+        0xc000 => return parse_unit(OpcodeUnit::CSw, raw),
+        0xe000 => return parse_unit(OpcodeUnit::CFsw, raw),
+        0x1 => return parse_unit(OpcodeUnit::CAddi, raw),
+        0x2001 => return parse_unit(OpcodeUnit::CJal, raw),
+        0x4001 => return parse_unit(OpcodeUnit::CLi, raw),
+        0x6001 => return parse_unit(OpcodeUnit::CLui, raw),
+        0xa001 => return parse_unit(OpcodeUnit::CJ, raw),
+        0xc001 => return parse_unit(OpcodeUnit::CBeqz, raw),
+        0xe001 => return parse_unit(OpcodeUnit::CBnez, raw),
+        0x2 => return parse_unit(OpcodeUnit::CSlli, raw),
+        0x2002 => return parse_unit(OpcodeUnit::CFldsp, raw),
+        0x4002 => return parse_unit(OpcodeUnit::CLwsp, raw),
+        0x6002 => return parse_unit(OpcodeUnit::CFlwsp, raw),
+        0xa002 => return parse_unit(OpcodeUnit::CFsdsp, raw),
+        0xc002 => return parse_unit(OpcodeUnit::CSwsp, raw),
+        0xe002 => return parse_unit(OpcodeUnit::CFswsp, raw),
         _ => (),
     }
-    match raw & 0xff07f {
-        0x102b => return parse_imm12_rd(OpcodeImm12Rd::Scfgri, raw),
+    match raw & 0xec03 {
+        0x8001 => return parse_unit(OpcodeUnit::CSrli, raw),
+        0x8401 => return parse_unit(OpcodeUnit::CSrai, raw),
+        0x8801 => return parse_unit(OpcodeUnit::CAndi, raw),
         _ => (),
     }
-    match raw & 0x400707f {
-        0x4005013 => return parse_rd_rs1_rs3_shamt(OpcodeRdRs1Rs3Shamt::Fsri, raw),
+    match raw & 0xf003 {
+        0x8002 => return parse_unit(OpcodeUnit::CMv, raw),
+        0x9002 => return parse_unit(OpcodeUnit::CAdd, raw),
+        _ => (),
+    }
+    match raw & 0xfc63 {
+        0x8c01 => return parse_unit(OpcodeUnit::CSub, raw),
+        0x8c21 => return parse_unit(OpcodeUnit::CXor, raw),
+        0x8c41 => return parse_unit(OpcodeUnit::COr, raw),
+        0x8c61 => return parse_unit(OpcodeUnit::CAnd, raw),
+        0x9c01 => return parse_unit(OpcodeUnit::CSubw, raw),
+        0x9c21 => return parse_unit(OpcodeUnit::CAddw, raw),
         _ => (),
     }
     match raw & 0x600007f {
@@ -2165,11 +2528,14 @@ pub fn parse_u32(raw: u32) -> Format {
         0x400004f => return parse_rd_rm_rs1_rs2_rs3(OpcodeRdRmRs1Rs2Rs3::FnmaddH, raw),
         _ => (),
     }
-    match raw & 0x600707f {
-        0x6001033 => return parse_rd_rs1_rs2_rs3(OpcodeRdRs1Rs2Rs3::Cmix, raw),
-        0x6005033 => return parse_rd_rs1_rs2_rs3(OpcodeRdRs1Rs2Rs3::Cmov, raw),
-        0x4001033 => return parse_rd_rs1_rs2_rs3(OpcodeRdRs1Rs2Rs3::Fsl, raw),
-        0x4005033 => return parse_rd_rs1_rs2_rs3(OpcodeRdRs1Rs2Rs3::Fsr, raw),
+    match raw & 0xc000707f {
+        0xc0000033 => return parse_luimm5_imm5_rd_rs1(OpcodeLuimm5Imm5RdRs1::PExtract, raw),
+        0xc0001033 => return parse_luimm5_imm5_rd_rs1(OpcodeLuimm5Imm5RdRs1::PExtractu, raw),
+        0xc0002033 => return parse_luimm5_imm5_rd_rs1(OpcodeLuimm5Imm5RdRs1::PInsert, raw),
+        0xc0004033 => return parse_luimm5_imm5_rd_rs1(OpcodeLuimm5Imm5RdRs1::PBset, raw),
+        0xc0003033 => return parse_luimm5_imm5_rd_rs1(OpcodeLuimm5Imm5RdRs1::PBclr, raw),
+        0x205b => return parse_luimm5_rd_rs1_rs2(OpcodeLuimm5RdRs1Rs2::PAddn, raw),
+        0x8000205b => return parse_luimm5_rd_rs1_rs2(OpcodeLuimm5RdRs1Rs2::PAddun, raw),
         _ => (),
     }
     match raw & 0xf800707f {
@@ -2204,15 +2570,77 @@ pub fn parse_u32(raw: u32) -> Format {
         0x1013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Slli, raw),
         0x5013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Srli, raw),
         0x40005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Srai, raw),
-        0x20001013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sloi, raw),
-        0x20005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sroi, raw),
-        0x60005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Rori, raw),
-        0x48001013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sbclri, raw),
-        0x28001013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sbseti, raw),
-        0x68001013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sbinvi, raw),
-        0x48005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Sbexti, raw),
-        0x28005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Gorci, raw),
-        0x68005013 => return parse_rd_rs1_shamt(OpcodeRdRs1Shamt::Grevi, raw),
+        0x6057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAddSciH, raw),
+        0x7057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAddSciB, raw),
+        0x8006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSubSciH, raw),
+        0x8007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSubSciB, raw),
+        0x10006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAvgSciH, raw),
+        0x10007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAvgSciB, raw),
+        0x18006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAvguSciH, raw),
+        0x18007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAvguSciB, raw),
+        0x20006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMinSciH, raw),
+        0x20007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMinSciB, raw),
+        0x28006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMinuSciH, raw),
+        0x28007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMinuSciB, raw),
+        0x30006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMaxSciH, raw),
+        0x30007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMaxSciB, raw),
+        0x38006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMaxuSciH, raw),
+        0x38007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvMaxuSciB, raw),
+        0x40006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSrlSciH, raw),
+        0x40007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSrlSciB, raw),
+        0x48006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSraSciH, raw),
+        0x48007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSraSciB, raw),
+        0x50006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSllSciH, raw),
+        0x50007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSllSciB, raw),
+        0x58006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvOrSciH, raw),
+        0x58007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvOrSciB, raw),
+        0x60006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvXorSciH, raw),
+        0x60007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvXorSciB, raw),
+        0x68006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAndSciH, raw),
+        0x68007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvAndSciB, raw),
+        0x78006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvExtractH, raw),
+        0x78007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvExtractB, raw),
+        0x90006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvExtractuH, raw),
+        0x90007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvExtractuB, raw),
+        0xb0006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvInsertH, raw),
+        0xb0007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvInsertB, raw),
+        0x98006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotspSciH, raw),
+        0x98007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotspSciB, raw),
+        0x80006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotupSciH, raw),
+        0x80007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotupSciB, raw),
+        0x88006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotuspSciH, raw),
+        0x88007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvDotuspSciB, raw),
+        0xb8006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotspSciH, raw),
+        0xb8007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotspSciB, raw),
+        0xa0006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotupSciH, raw),
+        0xa0007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotupSciB, raw),
+        0xa8006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotuspSciH, raw),
+        0xa8007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvSdotuspSciB, raw),
+        0x4006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpeqSciH, raw),
+        0x4007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpeqSciB, raw),
+        0xc006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpneSciH, raw),
+        0xc007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpneSciB, raw),
+        0x14006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgtSciH, raw),
+        0x14007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgtSciB, raw),
+        0x1c006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgeSciH, raw),
+        0x1c007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgeSciB, raw),
+        0x24006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpltSciH, raw),
+        0x24007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpltSciB, raw),
+        0x2c006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpleSciH, raw),
+        0x2c007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpleSciB, raw),
+        0x34006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgtuSciH, raw),
+        0x34007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgtuSciB, raw),
+        0x3c006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgeuSciH, raw),
+        0x3c007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpgeuSciB, raw),
+        0x44006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpltuSciH, raw),
+        0x44007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpltuSciB, raw),
+        0x4c006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpleuSciH, raw),
+        0x4c007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvCmpleuSciB, raw),
+        0xc0006057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvShuffleSciH, raw),
+        0xc0007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvShufflei0SciB, raw),
+        0xe8007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvShufflei1SciB, raw),
+        0xf0007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvShufflei2SciB, raw),
+        0xf8007057 => return parse_imm6_rd_rs1(OpcodeImm6RdRs1::PvShufflei3SciB, raw),
         _ => (),
     }
     match raw & 0xfe00007f {
@@ -2270,65 +2698,198 @@ pub fn parse_u32(raw: u32) -> Format {
         0x200503b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Divuw, raw),
         0x200603b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Remw, raw),
         0x200703b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Remuw, raw),
-        0x40007033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Andn, raw),
-        0x40006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Orn, raw),
-        0x40004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Xnor, raw),
-        0x20001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Slo, raw),
-        0x20005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sro, raw),
-        0x60001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Rol, raw),
-        0x60005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Ror, raw),
-        0x48001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sbclr, raw),
-        0x28001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sbset, raw),
-        0x68001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sbinv, raw),
-        0x48005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sbext, raw),
-        0x28005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Gorc, raw),
-        0x68005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Grev, raw),
-        0x20002033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sh1add, raw),
-        0x20004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sh2add, raw),
-        0x20006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Sh3add, raw),
-        0xa001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Clmul, raw),
-        0xa002033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Clmulr, raw),
-        0xa003033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Clmulh, raw),
-        0xa004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Min, raw),
-        0xa005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Max, raw),
-        0xa006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Minu, raw),
-        0xa007033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Maxu, raw),
-        0x8001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Shfl, raw),
-        0x8005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Unshfl, raw),
-        0x8006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Bext, raw),
-        0x48006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Bdep, raw),
-        0x8004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Pack, raw),
-        0x48004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Packu, raw),
-        0x8007033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Packh, raw),
-        0x48007033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Bfp, raw),
-        0x8001013 => return parse_rd_rs1_shamtw(OpcodeRdRs1Shamtw::Shfli, raw),
-        0x8005013 => return parse_rd_rs1_shamtw(OpcodeRdRs1Shamtw::Unshfli, raw),
         0x20000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjS, raw),
         0x20001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjnS, raw),
         0x20002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjxS, raw),
         0x28000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FminS, raw),
         0x28001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FmaxS, raw),
+        0xa0000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FleS, raw),
+        0xa0001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FltS, raw),
+        0xa0002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FeqS, raw),
         0x22000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjD, raw),
         0x22001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjnD, raw),
         0x22002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjxD, raw),
         0x2a000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FminD, raw),
         0x2a001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FmaxD, raw),
+        0xa2000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FleD, raw),
+        0xa2001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FltD, raw),
+        0xa2002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FeqD, raw),
         0x26000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjQ, raw),
         0x26001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjnQ, raw),
         0x26002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjxQ, raw),
         0x2e000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FminQ, raw),
         0x2e001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FmaxQ, raw),
-        0xa0000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FleS, raw),
-        0xa0001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FltS, raw),
-        0xa0002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FeqS, raw),
-        0xa2000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FleD, raw),
-        0xa2001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FltD, raw),
-        0xa2002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FeqD, raw),
         0xa6000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FleQ, raw),
         0xa6001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FltQ, raw),
         0xa6002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FeqQ, raw),
-        0x400002b => return parse_imm5_rd_rs1(OpcodeImm5RdRs1::Dmcpyi, raw),
-        0x600002b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::Dmcpy, raw),
+        0x80000033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PExtractr, raw),
+        0x80001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PExtractur, raw),
+        0x80002033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PInsertr, raw),
+        0x80004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PBsetr, raw),
+        0x80003033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PBclrr, raw),
+        0x10003033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PCnt, raw),
+        0x14001033 => return parse_imm5_rd_rs1(OpcodeImm5RdRs1::PClip, raw),
+        0x14005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PClipr, raw),
+        0x14002033 => return parse_imm5_rd_rs1(OpcodeImm5RdRs1::PClipu, raw),
+        0x14006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PClipur, raw),
+        0x42000033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMac, raw),
+        0x42001033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMsu, raw),
+        0x4004033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMin, raw),
+        0x4005033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMinu, raw),
+        0x4006033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMax, raw),
+        0x4007033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PMaxu, raw),
+        0x700b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLbRrpost, raw),
+        0x4000700b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLbuRrpost, raw),
+        0x1000700b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLhRrpost, raw),
+        0x5000700b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLhuRrpost, raw),
+        0x2000700b => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLwRrpost, raw),
+        0x7003 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLbRr, raw),
+        0x40007003 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLbuRr, raw),
+        0x10007003 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLhRr, raw),
+        0x50007003 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLhuRr, raw),
+        0x20007003 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PLwRr, raw),
+        0x402b => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PSbRrpost, raw),
+        0x502b => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PShRrpost, raw),
+        0x602b => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PSwRrpost, raw),
+        0x4023 => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PSbRr, raw),
+        0x5023 => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PShRr, raw),
+        0x6023 => return parse_prs3_rs1_rs2(OpcodePrs3Rs1Rs2::PSwRr, raw),
+        0x4002033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PSlet, raw),
+        0x4003033 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PSletu, raw),
+        0x57 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddH, raw),
+        0x4057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddScH, raw),
+        0x1057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddB, raw),
+        0x5057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddScB, raw),
+        0x8000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubH, raw),
+        0x8004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubScH, raw),
+        0x8001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubB, raw),
+        0x8005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubScB, raw),
+        0x10000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvgH, raw),
+        0x10004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvgScH, raw),
+        0x10001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvgB, raw),
+        0x10005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvgScB, raw),
+        0x18000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvguH, raw),
+        0x18004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvguScH, raw),
+        0x18001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvguB, raw),
+        0x18005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAvguScB, raw),
+        0x20000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinH, raw),
+        0x20004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinScH, raw),
+        0x20001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinB, raw),
+        0x20005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinScB, raw),
+        0x28000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinuH, raw),
+        0x28004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinuScH, raw),
+        0x28001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinuB, raw),
+        0x28005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMinuScB, raw),
+        0x30000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxH, raw),
+        0x30004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxScH, raw),
+        0x30001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxB, raw),
+        0x30005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxScB, raw),
+        0x38000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxuH, raw),
+        0x38004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxuScH, raw),
+        0x38001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxuB, raw),
+        0x38005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvMaxuScB, raw),
+        0x40000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSrlH, raw),
+        0x40004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSrlScH, raw),
+        0x40001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSrlB, raw),
+        0x40005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSrlScB, raw),
+        0x48000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSraH, raw),
+        0x48004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSraScH, raw),
+        0x48001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSraB, raw),
+        0x48005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSraScB, raw),
+        0x50000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSllH, raw),
+        0x50004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSllScH, raw),
+        0x50001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSllB, raw),
+        0x50005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSllScB, raw),
+        0x58000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvOrH, raw),
+        0x58004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvOrScH, raw),
+        0x58001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvOrB, raw),
+        0x58005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvOrScB, raw),
+        0x60000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvXorH, raw),
+        0x60004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvXorScH, raw),
+        0x60001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvXorB, raw),
+        0x60005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvXorScB, raw),
+        0x68000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAndH, raw),
+        0x68004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAndScH, raw),
+        0x68001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAndB, raw),
+        0x68005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAndScB, raw),
+        0x98000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotspH, raw),
+        0x98004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotspScH, raw),
+        0x98001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotspB, raw),
+        0x98005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotspScB, raw),
+        0x80000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotupH, raw),
+        0x80004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotupScH, raw),
+        0x80001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotupB, raw),
+        0x80005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotupScB, raw),
+        0x88000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotuspH, raw),
+        0x88004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotuspScH, raw),
+        0x88001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotuspB, raw),
+        0x88005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvDotuspScB, raw),
+        0xb8000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotspH, raw),
+        0xb8004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotspScH, raw),
+        0xb8001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotspB, raw),
+        0xb8005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotspScB, raw),
+        0xa0000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotupH, raw),
+        0xa0004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotupScH, raw),
+        0xa0001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotupB, raw),
+        0xa0005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotupScB, raw),
+        0xa8000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotuspH, raw),
+        0xa8004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotuspScH, raw),
+        0xa8001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotuspB, raw),
+        0xa8005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSdotuspScB, raw),
+        0x4000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpeqH, raw),
+        0x4004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpeqScH, raw),
+        0x4001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpeqB, raw),
+        0x4005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpeqScB, raw),
+        0xc000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpneH, raw),
+        0xc004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpneScH, raw),
+        0xc001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpneB, raw),
+        0xc005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpneScB, raw),
+        0x14000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtH, raw),
+        0x14004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtScH, raw),
+        0x14001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtB, raw),
+        0x14005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtScB, raw),
+        0x1c000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeH, raw),
+        0x1c004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeScH, raw),
+        0x1c001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeB, raw),
+        0x1c005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeScB, raw),
+        0x24000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltH, raw),
+        0x24004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltScH, raw),
+        0x24001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltB, raw),
+        0x24005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltScB, raw),
+        0x2c000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleH, raw),
+        0x2c004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleScH, raw),
+        0x2c001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleB, raw),
+        0x2c005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleScB, raw),
+        0x34000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtuH, raw),
+        0x34004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtuScH, raw),
+        0x34001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtuB, raw),
+        0x34005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgtuScB, raw),
+        0x3c000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeuH, raw),
+        0x3c004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeuScH, raw),
+        0x3c001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeuB, raw),
+        0x3c005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpgeuScB, raw),
+        0x44000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltuH, raw),
+        0x44004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltuScH, raw),
+        0x44001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltuB, raw),
+        0x44005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpltuScB, raw),
+        0x4c000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleuH, raw),
+        0x4c004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleuScH, raw),
+        0x4c001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleuB, raw),
+        0x4c005057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvCmpleuScB, raw),
+        0x74002057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddHDiv2, raw),
+        0x74004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddHDiv4, raw),
+        0x74006057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvAddHDiv8, raw),
+        0x64002057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubHDiv2, raw),
+        0x64004057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubHDiv4, raw),
+        0x64006057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvSubHDiv8, raw),
+        0xc0000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvShuffleH, raw),
+        0xc0001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvShuffleB, raw),
+        0xc8000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvShuffle2H, raw),
+        0xc8001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvShuffle2B, raw),
+        0xd0000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvPack, raw),
+        0xd2000057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvPackH, raw),
+        0xd8001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvPackhiB, raw),
+        0xe0001057 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::PvPackloB, raw),
         0x24000053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjH, raw),
         0x24001053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjnH, raw),
         0x24002053 => return parse_rd_rs1_rs2(OpcodeRdRs1Rs2::FsgnjxH, raw),
@@ -2474,53 +3035,47 @@ pub fn parse_u32(raw: u32) -> Format {
         _ => (),
     }
     match raw & 0xfe007fff {
+        0x22000073 => return parse_rs1_rs2(OpcodeRs1Rs2::HfenceVvma, raw),
+        0x62000073 => return parse_rs1_rs2(OpcodeRs1Rs2::HfenceGvma, raw),
+        0x62004073 => return parse_rs1_rs2(OpcodeRs1Rs2::HsvB, raw),
+        0x66004073 => return parse_rs1_rs2(OpcodeRs1Rs2::HsvH, raw),
+        0x6a004073 => return parse_rs1_rs2(OpcodeRs1Rs2::HsvW, raw),
+        0x6e004073 => return parse_rs1_rs2(OpcodeRs1Rs2::HsvD, raw),
         0x12000073 => return parse_rs1_rs2(OpcodeRs1Rs2::SfenceVma, raw),
-        0x22000073 => return parse_rs1_rs2(OpcodeRs1Rs2::HfenceBvma, raw),
-        0xa2000073 => return parse_rs1_rs2(OpcodeRs1Rs2::HfenceGvma, raw),
-        0x2b => return parse_rs1_rs2(OpcodeRs1Rs2::Dmsrc, raw),
-        0x200002b => return parse_rs1_rs2(OpcodeRs1Rs2::Dmdst, raw),
-        0xc00002b => return parse_rs1_rs2(OpcodeRs1Rs2::Dmstr, raw),
-        0x20ab => return parse_rs1_rs2(OpcodeRs1Rs2::Scfgw, raw),
-        _ => (),
-    }
-    match raw & 0xfe0ff07f {
-        0x800002b => return parse_imm5_rd(OpcodeImm5Rd::Dmstati, raw),
-        0xa00002b => return parse_rd_rs2(OpcodeRdRs2::Dmstat, raw),
-        0x902b => return parse_rd_rs2(OpcodeRdRs2::Scfgr, raw),
         _ => (),
     }
     match raw & 0xfff0007f {
         0x58000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FsqrtS, raw),
+        0xc0000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWS, raw),
+        0xc0100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWuS, raw),
+        0xd0000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSW, raw),
+        0xd0100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSWu, raw),
+        0xc0200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLS, raw),
+        0xc0300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuS, raw),
+        0xd0200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSL, raw),
+        0xd0300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSLu, raw),
         0x40100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSD, raw),
         0x42000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDS, raw),
         0x5a000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FsqrtD, raw),
+        0xc2000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWD, raw),
+        0xc2100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWuD, raw),
+        0xd2000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDW, raw),
+        0xd2100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDWu, raw),
+        0xc2200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLD, raw),
+        0xc2300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuD, raw),
+        0xd2200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDL, raw),
+        0xd2300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDLu, raw),
         0x40300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSQ, raw),
         0x46000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQS, raw),
         0x42300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDQ, raw),
         0x46100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQD, raw),
         0x5e000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FsqrtQ, raw),
-        0xc0000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWS, raw),
-        0xc0100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWuS, raw),
-        0xc0200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLS, raw),
-        0xc0300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuS, raw),
-        0xc2000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWD, raw),
-        0xc2100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWuD, raw),
-        0xc2200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLD, raw),
-        0xc2300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuD, raw),
         0xc6000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWQ, raw),
         0xc6100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtWuQ, raw),
-        0xc6200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLQ, raw),
-        0xc6300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuQ, raw),
-        0xd0000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSW, raw),
-        0xd0100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSWu, raw),
-        0xd0200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSL, raw),
-        0xd0300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtSLu, raw),
-        0xd2000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDW, raw),
-        0xd2100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDWu, raw),
-        0xd2200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDL, raw),
-        0xd2300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtDLu, raw),
         0xd6000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQW, raw),
         0xd6100053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQWu, raw),
+        0xc6200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLQ, raw),
+        0xc6300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtLuQ, raw),
         0xd6200053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQL, raw),
         0xd6300053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FcvtQLu, raw),
         0x5c000053 => return parse_rd_rm_rs1(OpcodeRdRmRs1::FsqrtH, raw),
@@ -2539,26 +3094,33 @@ pub fn parse_u32(raw: u32) -> Format {
         _ => (),
     }
     match raw & 0xfff0707f {
-        0x60001013 => return parse_rd_rs1(OpcodeRdRs1::Clz, raw),
-        0x60101013 => return parse_rd_rs1(OpcodeRdRs1::Ctz, raw),
-        0x60201013 => return parse_rd_rs1(OpcodeRdRs1::Pcnt, raw),
-        0x60401013 => return parse_rd_rs1(OpcodeRdRs1::SextB, raw),
-        0x60501013 => return parse_rd_rs1(OpcodeRdRs1::SextH, raw),
-        0x61001013 => return parse_rd_rs1(OpcodeRdRs1::Crc32B, raw),
-        0x61101013 => return parse_rd_rs1(OpcodeRdRs1::Crc32H, raw),
-        0x61201013 => return parse_rd_rs1(OpcodeRdRs1::Crc32W, raw),
-        0x61801013 => return parse_rd_rs1(OpcodeRdRs1::Crc32cB, raw),
-        0x61901013 => return parse_rd_rs1(OpcodeRdRs1::Crc32cH, raw),
-        0x61a01013 => return parse_rd_rs1(OpcodeRdRs1::Crc32cW, raw),
+        0x60004073 => return parse_rd_rs1(OpcodeRdRs1::HlvB, raw),
+        0x60104073 => return parse_rd_rs1(OpcodeRdRs1::HlvBu, raw),
+        0x64004073 => return parse_rd_rs1(OpcodeRdRs1::HlvH, raw),
+        0x64104073 => return parse_rd_rs1(OpcodeRdRs1::HlvHu, raw),
+        0x64304073 => return parse_rd_rs1(OpcodeRdRs1::HlvxHu, raw),
+        0x68004073 => return parse_rd_rs1(OpcodeRdRs1::HlvW, raw),
+        0x68304073 => return parse_rd_rs1(OpcodeRdRs1::HlvxWu, raw),
+        0x68104073 => return parse_rd_rs1(OpcodeRdRs1::HlvWu, raw),
+        0x6c004073 => return parse_rd_rs1(OpcodeRdRs1::HlvD, raw),
         0xe0000053 => return parse_rd_rs1(OpcodeRdRs1::FmvXW, raw),
         0xe0001053 => return parse_rd_rs1(OpcodeRdRs1::FclassS, raw),
-        0xe2000053 => return parse_rd_rs1(OpcodeRdRs1::FmvXD, raw),
-        0xe2001053 => return parse_rd_rs1(OpcodeRdRs1::FclassD, raw),
-        0xe6000053 => return parse_rd_rs1(OpcodeRdRs1::FmvXQ, raw),
-        0xe6001053 => return parse_rd_rs1(OpcodeRdRs1::FclassQ, raw),
         0xf0000053 => return parse_rd_rs1(OpcodeRdRs1::FmvWX, raw),
+        0xe2001053 => return parse_rd_rs1(OpcodeRdRs1::FclassD, raw),
+        0xe2000053 => return parse_rd_rs1(OpcodeRdRs1::FmvXD, raw),
         0xf2000053 => return parse_rd_rs1(OpcodeRdRs1::FmvDX, raw),
-        0xf6000053 => return parse_rd_rs1(OpcodeRdRs1::FmvQX, raw),
+        0xe6001053 => return parse_rd_rs1(OpcodeRdRs1::FclassQ, raw),
+        0x4000033 => return parse_rd_rs1(OpcodeRdRs1::PAbs, raw),
+        0x10004033 => return parse_rd_rs1(OpcodeRdRs1::PExths, raw),
+        0x10005033 => return parse_rd_rs1(OpcodeRdRs1::PExthz, raw),
+        0x10006033 => return parse_rd_rs1(OpcodeRdRs1::PExtbs, raw),
+        0x10007033 => return parse_rd_rs1(OpcodeRdRs1::PExtbz, raw),
+        0x10002033 => return parse_rd_rs1(OpcodeRdRs1::PClb, raw),
+        0x10001033 => return parse_rd_rs1(OpcodeRdRs1::PFl1, raw),
+        0x10000033 => return parse_rd_rs1(OpcodeRdRs1::PFf1, raw),
+        0x8005033 => return parse_rd_rs1(OpcodeRdRs1::PRor, raw),
+        0x70000057 => return parse_rd_rs1(OpcodeRdRs1::PvAbsH, raw),
+        0x70001057 => return parse_rd_rs1(OpcodeRdRs1::PvAbsB, raw),
         0xe4000053 => return parse_rd_rs1(OpcodeRdRs1::FmvXH, raw),
         0xe4001053 => return parse_rd_rs1(OpcodeRdRs1::FclassH, raw),
         0xf4000053 => return parse_rd_rs1(OpcodeRdRs1::FmvHX, raw),
@@ -2618,10 +3180,6 @@ pub fn parse_u32(raw: u32) -> Format {
         0xaf702033 => return parse_rd_rs1(OpcodeRdRs1::VfnsumexHB, raw),
         _ => (),
     }
-    match raw & 0xfff07fff {
-        0xe00002b => return parse_rs1(OpcodeRs1::Dmrep, raw),
-        _ => (),
-    }
     match raw & 0xffffffff {
         0x73 => return parse_unit(OpcodeUnit::Ecall, raw),
         0x100073 => return parse_unit(OpcodeUnit::Ebreak, raw),
@@ -2648,6 +3206,30 @@ pub fn parse_unit(op: OpcodeUnit, raw: u32) -> Format {
     Format::Unit(FormatUnit { op, raw })
 }
 
+/// Parse an instruction with the `Luimm5Imm5RdRs1` format.
+pub fn parse_luimm5_imm5_rd_rs1(op: OpcodeLuimm5Imm5RdRs1, raw: u32) -> Format {
+    Format::Luimm5Imm5RdRs1(FormatLuimm5Imm5RdRs1 {
+        op,
+        raw,
+        luimm5: (raw >> 25) & 0x1f,
+        imm5: (raw >> 20) & 0x1f,
+        rd: (raw >> 7) & 0x1f,
+        rs1: (raw >> 15) & 0x1f,
+    })
+}
+
+/// Parse an instruction with the `Luimm5RdRs1Rs2` format.
+pub fn parse_luimm5_rd_rs1_rs2(op: OpcodeLuimm5RdRs1Rs2, raw: u32) -> Format {
+    Format::Luimm5RdRs1Rs2(FormatLuimm5RdRs1Rs2 {
+        op,
+        raw,
+        luimm5: (raw >> 25) & 0x1f,
+        rd: (raw >> 7) & 0x1f,
+        rs1: (raw >> 15) & 0x1f,
+        rs2: (raw >> 20) & 0x1f,
+    })
+}
+
 /// Parse an instruction with the `AqrlRdRs1` format.
 pub fn parse_aqrl_rd_rs1(op: OpcodeAqrlRdRs1, raw: u32) -> Format {
     Format::AqrlRdRs1(FormatAqrlRdRs1 {
@@ -2668,6 +3250,18 @@ pub fn parse_aqrl_rd_rs1_rs2(op: OpcodeAqrlRdRs1Rs2, raw: u32) -> Format {
         rd: (raw >> 7) & 0x1f,
         rs1: (raw >> 15) & 0x1f,
         rs2: (raw >> 20) & 0x1f,
+    })
+}
+
+/// Parse an instruction with the `Bimm12hiBimm12loImm5Rs1` format.
+pub fn parse_bimm12hi_bimm12lo_imm5_rs1(op: OpcodeBimm12hiBimm12loImm5Rs1, raw: u32) -> Format {
+    Format::Bimm12hiBimm12loImm5Rs1(FormatBimm12hiBimm12loImm5Rs1 {
+        op,
+        raw,
+        bimm12hi: (raw >> 25) & 0x7f,
+        bimm12lo: (raw >> 7) & 0x1f,
+        imm5: (raw >> 20) & 0x1f,
+        rs1: (raw >> 15) & 0x1f,
     })
 }
 
@@ -2696,28 +3290,6 @@ pub fn parse_fm_pred_rd_rs1_succ(op: OpcodeFmPredRdRs1Succ, raw: u32) -> Format 
     })
 }
 
-/// Parse an instruction with the `Imm12Rd` format.
-pub fn parse_imm12_rd(op: OpcodeImm12Rd, raw: u32) -> Format {
-    Format::Imm12Rd(FormatImm12Rd {
-        op,
-        raw,
-        imm12: (raw >> 20) & 0xfff,
-        rd: (raw >> 7) & 0x1f,
-    })
-}
-
-/// Parse an instruction with the `Imm12RdRmRs1` format.
-pub fn parse_imm12_rd_rm_rs1(op: OpcodeImm12RdRmRs1, raw: u32) -> Format {
-    Format::Imm12RdRmRs1(FormatImm12RdRmRs1 {
-        op,
-        raw,
-        imm12: (raw >> 20) & 0xfff,
-        rd: (raw >> 7) & 0x1f,
-        rm: (raw >> 12) & 0x7,
-        rs1: (raw >> 15) & 0x1f,
-    })
-}
-
 /// Parse an instruction with the `Imm12RdRs1` format.
 pub fn parse_imm12_rd_rs1(op: OpcodeImm12RdRs1, raw: u32) -> Format {
     Format::Imm12RdRs1(FormatImm12RdRs1 {
@@ -2726,31 +3298,6 @@ pub fn parse_imm12_rd_rs1(op: OpcodeImm12RdRs1, raw: u32) -> Format {
         imm12: (raw >> 20) & 0xfff,
         rd: (raw >> 7) & 0x1f,
         rs1: (raw >> 15) & 0x1f,
-    })
-}
-
-/// Parse an instruction with the `Imm12Rs1` format.
-pub fn parse_imm12_rs1(op: OpcodeImm12Rs1, raw: u32) -> Format {
-    Format::Imm12Rs1(FormatImm12Rs1 {
-        op,
-        raw,
-        imm12: (raw >> 20) & 0xfff,
-        rs1: (raw >> 15) & 0x1f,
-    })
-}
-
-/// Parse an instruction with the `Imm12Rs1StaggerMaskStaggerMax` format.
-pub fn parse_imm12_rs1_stagger_mask_stagger_max(
-    op: OpcodeImm12Rs1StaggerMaskStaggerMax,
-    raw: u32,
-) -> Format {
-    Format::Imm12Rs1StaggerMaskStaggerMax(FormatImm12Rs1StaggerMaskStaggerMax {
-        op,
-        raw,
-        imm12: (raw >> 20) & 0xfff,
-        rs1: (raw >> 15) & 0x1f,
-        stagger_mask: (raw >> 8) & 0xf,
-        stagger_max: (raw >> 12) & 0x7,
     })
 }
 
@@ -2776,22 +3323,23 @@ pub fn parse_imm20_rd(op: OpcodeImm20Rd, raw: u32) -> Format {
     })
 }
 
-/// Parse an instruction with the `Imm5Rd` format.
-pub fn parse_imm5_rd(op: OpcodeImm5Rd, raw: u32) -> Format {
-    Format::Imm5Rd(FormatImm5Rd {
-        op,
-        raw,
-        imm5: (raw >> 20) & 0x1f,
-        rd: (raw >> 7) & 0x1f,
-    })
-}
-
 /// Parse an instruction with the `Imm5RdRs1` format.
 pub fn parse_imm5_rd_rs1(op: OpcodeImm5RdRs1, raw: u32) -> Format {
     Format::Imm5RdRs1(FormatImm5RdRs1 {
         op,
         raw,
         imm5: (raw >> 20) & 0x1f,
+        rd: (raw >> 7) & 0x1f,
+        rs1: (raw >> 15) & 0x1f,
+    })
+}
+
+/// Parse an instruction with the `Imm6RdRs1` format.
+pub fn parse_imm6_rd_rs1(op: OpcodeImm6RdRs1, raw: u32) -> Format {
+    Format::Imm6RdRs1(FormatImm6RdRs1 {
+        op,
+        raw,
+        imm6: (raw >> 20) & 0x3f,
         rd: (raw >> 7) & 0x1f,
         rs1: (raw >> 15) & 0x1f,
     })
@@ -2804,6 +3352,17 @@ pub fn parse_jimm20_rd(op: OpcodeJimm20Rd, raw: u32) -> Format {
         raw,
         jimm20: (raw >> 12) & 0xfffff,
         rd: (raw >> 7) & 0x1f,
+    })
+}
+
+/// Parse an instruction with the `Prs3Rs1Rs2` format.
+pub fn parse_prs3_rs1_rs2(op: OpcodePrs3Rs1Rs2, raw: u32) -> Format {
+    Format::Prs3Rs1Rs2(FormatPrs3Rs1Rs2 {
+        op,
+        raw,
+        prs3: (raw >> 7) & 0x1f,
+        rs1: (raw >> 15) & 0x1f,
+        rs2: (raw >> 20) & 0x1f,
     })
 }
 
@@ -2864,30 +3423,6 @@ pub fn parse_rd_rs1_rs2(op: OpcodeRdRs1Rs2, raw: u32) -> Format {
     })
 }
 
-/// Parse an instruction with the `RdRs1Rs2Rs3` format.
-pub fn parse_rd_rs1_rs2_rs3(op: OpcodeRdRs1Rs2Rs3, raw: u32) -> Format {
-    Format::RdRs1Rs2Rs3(FormatRdRs1Rs2Rs3 {
-        op,
-        raw,
-        rd: (raw >> 7) & 0x1f,
-        rs1: (raw >> 15) & 0x1f,
-        rs2: (raw >> 20) & 0x1f,
-        rs3: (raw >> 27) & 0x1f,
-    })
-}
-
-/// Parse an instruction with the `RdRs1Rs3Shamt` format.
-pub fn parse_rd_rs1_rs3_shamt(op: OpcodeRdRs1Rs3Shamt, raw: u32) -> Format {
-    Format::RdRs1Rs3Shamt(FormatRdRs1Rs3Shamt {
-        op,
-        raw,
-        rd: (raw >> 7) & 0x1f,
-        rs1: (raw >> 15) & 0x1f,
-        rs3: (raw >> 27) & 0x1f,
-        shamt: (raw >> 20) & 0x3f,
-    })
-}
-
 /// Parse an instruction with the `RdRs1Shamt` format.
 pub fn parse_rd_rs1_shamt(op: OpcodeRdRs1Shamt, raw: u32) -> Format {
     Format::RdRs1Shamt(FormatRdRs1Shamt {
@@ -2910,25 +3445,6 @@ pub fn parse_rd_rs1_shamtw(op: OpcodeRdRs1Shamtw, raw: u32) -> Format {
     })
 }
 
-/// Parse an instruction with the `RdRs2` format.
-pub fn parse_rd_rs2(op: OpcodeRdRs2, raw: u32) -> Format {
-    Format::RdRs2(FormatRdRs2 {
-        op,
-        raw,
-        rd: (raw >> 7) & 0x1f,
-        rs2: (raw >> 20) & 0x1f,
-    })
-}
-
-/// Parse an instruction with the `Rs1` format.
-pub fn parse_rs1(op: OpcodeRs1, raw: u32) -> Format {
-    Format::Rs1(FormatRs1 {
-        op,
-        raw,
-        rs1: (raw >> 15) & 0x1f,
-    })
-}
-
 /// Parse an instruction with the `Rs1Rs2` format.
 pub fn parse_rs1_rs2(op: OpcodeRs1Rs2, raw: u32) -> Format {
     Format::Rs1Rs2(FormatRs1Rs2 {
@@ -2943,31 +3459,27 @@ pub fn parse_rs1_rs2(op: OpcodeRs1Rs2, raw: u32) -> Format {
 pub fn inst_to_string(raw: Format) -> String {
     match raw {
         Format::Unit(x) => x.op.to_string(),
+        Format::Luimm5Imm5RdRs1(x) => x.op.to_string(),
+        Format::Luimm5RdRs1Rs2(x) => x.op.to_string(),
         Format::AqrlRdRs1(x) => x.op.to_string(),
         Format::AqrlRdRs1Rs2(x) => x.op.to_string(),
+        Format::Bimm12hiBimm12loImm5Rs1(x) => x.op.to_string(),
         Format::Bimm12hiBimm12loRs1Rs2(x) => x.op.to_string(),
         Format::FmPredRdRs1Succ(x) => x.op.to_string(),
-        Format::Imm12Rd(x) => x.op.to_string(),
-        Format::Imm12RdRmRs1(x) => x.op.to_string(),
         Format::Imm12RdRs1(x) => x.op.to_string(),
-        Format::Imm12Rs1(x) => x.op.to_string(),
-        Format::Imm12Rs1StaggerMaskStaggerMax(x) => x.op.to_string(),
         Format::Imm12hiImm12loRs1Rs2(x) => x.op.to_string(),
         Format::Imm20Rd(x) => x.op.to_string(),
-        Format::Imm5Rd(x) => x.op.to_string(),
         Format::Imm5RdRs1(x) => x.op.to_string(),
+        Format::Imm6RdRs1(x) => x.op.to_string(),
         Format::Jimm20Rd(x) => x.op.to_string(),
+        Format::Prs3Rs1Rs2(x) => x.op.to_string(),
         Format::RdRmRs1(x) => x.op.to_string(),
         Format::RdRmRs1Rs2(x) => x.op.to_string(),
         Format::RdRmRs1Rs2Rs3(x) => x.op.to_string(),
         Format::RdRs1(x) => x.op.to_string(),
         Format::RdRs1Rs2(x) => x.op.to_string(),
-        Format::RdRs1Rs2Rs3(x) => x.op.to_string(),
-        Format::RdRs1Rs3Shamt(x) => x.op.to_string(),
         Format::RdRs1Shamt(x) => x.op.to_string(),
         Format::RdRs1Shamtw(x) => x.op.to_string(),
-        Format::RdRs2(x) => x.op.to_string(),
-        Format::Rs1(x) => x.op.to_string(),
         Format::Rs1Rs2(x) => x.op.to_string(),
         _ => "Unsupported instruction format".to_string(),
     }
@@ -2983,6 +3495,47 @@ pub struct Latency {
     mret: u8,
     dret: u8,
     wfi: u8,
+    c_addi4spn: u8,
+    c_fld: u8,
+    c_lw: u8,
+    c_flw: u8,
+    c_fsd: u8,
+    c_sw: u8,
+    c_fsw: u8,
+    c_addi: u8,
+    c_jal: u8,
+    c_li: u8,
+    c_lui: u8,
+    c_srli: u8,
+    c_srai: u8,
+    c_andi: u8,
+    c_sub: u8,
+    c_xor: u8,
+    c_or: u8,
+    c_and: u8,
+    c_j: u8,
+    c_beqz: u8,
+    c_bnez: u8,
+    c_slli: u8,
+    c_fldsp: u8,
+    c_lwsp: u8,
+    c_flwsp: u8,
+    c_mv: u8,
+    c_add: u8,
+    c_fsdsp: u8,
+    c_swsp: u8,
+    c_fswsp: u8,
+    c_subw: u8,
+    c_addw: u8,
+    // Format::Luimm5Imm5RdRs1
+    p_extract: u8,
+    p_extractu: u8,
+    p_insert: u8,
+    p_bset: u8,
+    p_bclr: u8,
+    // Format::Luimm5RdRs1Rs2
+    p_addn: u8,
+    p_addun: u8,
     // Format::AqrlRdRs1
     lr_w: u8,
     lr_d: u8,
@@ -3007,6 +3560,9 @@ pub struct Latency {
     amomaxu_d: u8,
     amoswap_d: u8,
     sc_d: u8,
+    // Format::Bimm12hiBimm12loImm5Rs1
+    p_beqimm: u8,
+    p_bneimm: u8,
     // Format::Bimm12hiBimm12loRs1Rs2
     beq: u8,
     bne: u8,
@@ -3016,10 +3572,6 @@ pub struct Latency {
     bgeu: u8,
     // Format::FmPredRdRs1Succ
     fence: u8,
-    // Format::Imm12Rd
-    scfgri: u8,
-    // Format::Imm12RdRmRs1
-    irep: u8,
     // Format::Imm12RdRs1
     jalr: u8,
     addi: u8,
@@ -3028,31 +3580,31 @@ pub struct Latency {
     xori: u8,
     ori: u8,
     andi: u8,
-    addiw: u8,
     lb: u8,
     lh: u8,
     lw: u8,
-    ld: u8,
     lbu: u8,
     lhu: u8,
-    lwu: u8,
     fence_i: u8,
+    addiw: u8,
+    ld: u8,
+    lwu: u8,
+    flw: u8,
+    fld: u8,
+    flq: u8,
     csrrw: u8,
     csrrs: u8,
     csrrc: u8,
     csrrwi: u8,
     csrrsi: u8,
     csrrci: u8,
-    flw: u8,
-    fld: u8,
-    flq: u8,
+    p_lb_irpost: u8,
+    p_lbu_irpost: u8,
+    p_lh_irpost: u8,
+    p_lhu_irpost: u8,
+    p_lw_irpost: u8,
     flh: u8,
     flb: u8,
-    // Format::Imm12Rs1
-    scfgwi: u8,
-    // Format::Imm12Rs1StaggerMaskStaggerMax
-    frep_o: u8,
-    frep_i: u8,
     // Format::Imm12hiImm12loRs1Rs2
     sb: u8,
     sh: u8,
@@ -3061,49 +3613,130 @@ pub struct Latency {
     fsw: u8,
     fsd: u8,
     fsq: u8,
+    p_sb_irpost: u8,
+    p_sh_irpost: u8,
+    p_sw_irpost: u8,
     fsh: u8,
     fsb: u8,
     // Format::Imm20Rd
     lui: u8,
     auipc: u8,
-    // Format::Imm5Rd
-    dmstati: u8,
     // Format::Imm5RdRs1
-    dmcpyi: u8,
+    p_clip: u8,
+    p_clipu: u8,
+    // Format::Imm6RdRs1
+    pv_add_sci_h: u8,
+    pv_add_sci_b: u8,
+    pv_sub_sci_h: u8,
+    pv_sub_sci_b: u8,
+    pv_avg_sci_h: u8,
+    pv_avg_sci_b: u8,
+    pv_avgu_sci_h: u8,
+    pv_avgu_sci_b: u8,
+    pv_min_sci_h: u8,
+    pv_min_sci_b: u8,
+    pv_minu_sci_h: u8,
+    pv_minu_sci_b: u8,
+    pv_max_sci_h: u8,
+    pv_max_sci_b: u8,
+    pv_maxu_sci_h: u8,
+    pv_maxu_sci_b: u8,
+    pv_srl_sci_h: u8,
+    pv_srl_sci_b: u8,
+    pv_sra_sci_h: u8,
+    pv_sra_sci_b: u8,
+    pv_sll_sci_h: u8,
+    pv_sll_sci_b: u8,
+    pv_or_sci_h: u8,
+    pv_or_sci_b: u8,
+    pv_xor_sci_h: u8,
+    pv_xor_sci_b: u8,
+    pv_and_sci_h: u8,
+    pv_and_sci_b: u8,
+    pv_extract_h: u8,
+    pv_extract_b: u8,
+    pv_extractu_h: u8,
+    pv_extractu_b: u8,
+    pv_insert_h: u8,
+    pv_insert_b: u8,
+    pv_dotsp_sci_h: u8,
+    pv_dotsp_sci_b: u8,
+    pv_dotup_sci_h: u8,
+    pv_dotup_sci_b: u8,
+    pv_dotusp_sci_h: u8,
+    pv_dotusp_sci_b: u8,
+    pv_sdotsp_sci_h: u8,
+    pv_sdotsp_sci_b: u8,
+    pv_sdotup_sci_h: u8,
+    pv_sdotup_sci_b: u8,
+    pv_sdotusp_sci_h: u8,
+    pv_sdotusp_sci_b: u8,
+    pv_cmpeq_sci_h: u8,
+    pv_cmpeq_sci_b: u8,
+    pv_cmpne_sci_h: u8,
+    pv_cmpne_sci_b: u8,
+    pv_cmpgt_sci_h: u8,
+    pv_cmpgt_sci_b: u8,
+    pv_cmpge_sci_h: u8,
+    pv_cmpge_sci_b: u8,
+    pv_cmplt_sci_h: u8,
+    pv_cmplt_sci_b: u8,
+    pv_cmple_sci_h: u8,
+    pv_cmple_sci_b: u8,
+    pv_cmpgtu_sci_h: u8,
+    pv_cmpgtu_sci_b: u8,
+    pv_cmpgeu_sci_h: u8,
+    pv_cmpgeu_sci_b: u8,
+    pv_cmpltu_sci_h: u8,
+    pv_cmpltu_sci_b: u8,
+    pv_cmpleu_sci_h: u8,
+    pv_cmpleu_sci_b: u8,
+    pv_shuffle_sci_h: u8,
+    pv_shufflei0_sci_b: u8,
+    pv_shufflei1_sci_b: u8,
+    pv_shufflei2_sci_b: u8,
+    pv_shufflei3_sci_b: u8,
     // Format::Jimm20Rd
     jal: u8,
+    // Format::Prs3Rs1Rs2
+    p_sb_rrpost: u8,
+    p_sh_rrpost: u8,
+    p_sw_rrpost: u8,
+    p_sb_rr: u8,
+    p_sh_rr: u8,
+    p_sw_rr: u8,
     // Format::RdRmRs1
     fsqrt_s: u8,
+    fcvt_w_s: u8,
+    fcvt_wu_s: u8,
+    fcvt_s_w: u8,
+    fcvt_s_wu: u8,
+    fcvt_l_s: u8,
+    fcvt_lu_s: u8,
+    fcvt_s_l: u8,
+    fcvt_s_lu: u8,
     fcvt_s_d: u8,
     fcvt_d_s: u8,
     fsqrt_d: u8,
+    fcvt_w_d: u8,
+    fcvt_wu_d: u8,
+    fcvt_d_w: u8,
+    fcvt_d_wu: u8,
+    fcvt_l_d: u8,
+    fcvt_lu_d: u8,
+    fcvt_d_l: u8,
+    fcvt_d_lu: u8,
     fcvt_s_q: u8,
     fcvt_q_s: u8,
     fcvt_d_q: u8,
     fcvt_q_d: u8,
     fsqrt_q: u8,
-    fcvt_w_s: u8,
-    fcvt_wu_s: u8,
-    fcvt_l_s: u8,
-    fcvt_lu_s: u8,
-    fcvt_w_d: u8,
-    fcvt_wu_d: u8,
-    fcvt_l_d: u8,
-    fcvt_lu_d: u8,
     fcvt_w_q: u8,
     fcvt_wu_q: u8,
-    fcvt_l_q: u8,
-    fcvt_lu_q: u8,
-    fcvt_s_w: u8,
-    fcvt_s_wu: u8,
-    fcvt_s_l: u8,
-    fcvt_s_lu: u8,
-    fcvt_d_w: u8,
-    fcvt_d_wu: u8,
-    fcvt_d_l: u8,
-    fcvt_d_lu: u8,
     fcvt_q_w: u8,
     fcvt_q_wu: u8,
+    fcvt_l_q: u8,
+    fcvt_lu_q: u8,
     fcvt_q_l: u8,
     fcvt_q_lu: u8,
     fsqrt_h: u8,
@@ -3158,26 +3791,33 @@ pub struct Latency {
     fnmsub_h: u8,
     fnmadd_h: u8,
     // Format::RdRs1
-    clz: u8,
-    ctz: u8,
-    pcnt: u8,
-    sext_b: u8,
-    sext_h: u8,
-    crc32_b: u8,
-    crc32_h: u8,
-    crc32_w: u8,
-    crc32c_b: u8,
-    crc32c_h: u8,
-    crc32c_w: u8,
+    hlv_b: u8,
+    hlv_bu: u8,
+    hlv_h: u8,
+    hlv_hu: u8,
+    hlvx_hu: u8,
+    hlv_w: u8,
+    hlvx_wu: u8,
+    hlv_wu: u8,
+    hlv_d: u8,
     fmv_x_w: u8,
     fclass_s: u8,
-    fmv_x_d: u8,
-    fclass_d: u8,
-    fmv_x_q: u8,
-    fclass_q: u8,
     fmv_w_x: u8,
+    fclass_d: u8,
+    fmv_x_d: u8,
     fmv_d_x: u8,
-    fmv_q_x: u8,
+    fclass_q: u8,
+    p_abs: u8,
+    p_exths: u8,
+    p_exthz: u8,
+    p_extbs: u8,
+    p_extbz: u8,
+    p_clb: u8,
+    p_fl1: u8,
+    p_ff1: u8,
+    p_ror: u8,
+    pv_abs_h: u8,
+    pv_abs_b: u8,
     fmv_x_h: u8,
     fclass_h: u8,
     fmv_h_x: u8,
@@ -3264,62 +3904,190 @@ pub struct Latency {
     divuw: u8,
     remw: u8,
     remuw: u8,
-    andn: u8,
-    orn: u8,
-    xnor: u8,
-    slo: u8,
-    sro: u8,
-    rol: u8,
-    ror: u8,
-    sbclr: u8,
-    sbset: u8,
-    sbinv: u8,
-    sbext: u8,
-    gorc: u8,
-    grev: u8,
-    sh1add: u8,
-    sh2add: u8,
-    sh3add: u8,
-    clmul: u8,
-    clmulr: u8,
-    clmulh: u8,
-    min: u8,
-    max: u8,
-    minu: u8,
-    maxu: u8,
-    shfl: u8,
-    unshfl: u8,
-    bext: u8,
-    bdep: u8,
-    pack: u8,
-    packu: u8,
-    packh: u8,
-    bfp: u8,
     fsgnj_s: u8,
     fsgnjn_s: u8,
     fsgnjx_s: u8,
     fmin_s: u8,
     fmax_s: u8,
+    fle_s: u8,
+    flt_s: u8,
+    feq_s: u8,
     fsgnj_d: u8,
     fsgnjn_d: u8,
     fsgnjx_d: u8,
     fmin_d: u8,
     fmax_d: u8,
+    fle_d: u8,
+    flt_d: u8,
+    feq_d: u8,
     fsgnj_q: u8,
     fsgnjn_q: u8,
     fsgnjx_q: u8,
     fmin_q: u8,
     fmax_q: u8,
-    fle_s: u8,
-    flt_s: u8,
-    feq_s: u8,
-    fle_d: u8,
-    flt_d: u8,
-    feq_d: u8,
     fle_q: u8,
     flt_q: u8,
     feq_q: u8,
-    dmcpy: u8,
+    p_extractr: u8,
+    p_extractur: u8,
+    p_insertr: u8,
+    p_bsetr: u8,
+    p_bclrr: u8,
+    p_cnt: u8,
+    p_clipr: u8,
+    p_clipur: u8,
+    p_mac: u8,
+    p_msu: u8,
+    p_min: u8,
+    p_minu: u8,
+    p_max: u8,
+    p_maxu: u8,
+    p_lb_rrpost: u8,
+    p_lbu_rrpost: u8,
+    p_lh_rrpost: u8,
+    p_lhu_rrpost: u8,
+    p_lw_rrpost: u8,
+    p_lb_rr: u8,
+    p_lbu_rr: u8,
+    p_lh_rr: u8,
+    p_lhu_rr: u8,
+    p_lw_rr: u8,
+    p_slet: u8,
+    p_sletu: u8,
+    pv_add_h: u8,
+    pv_add_sc_h: u8,
+    pv_add_b: u8,
+    pv_add_sc_b: u8,
+    pv_sub_h: u8,
+    pv_sub_sc_h: u8,
+    pv_sub_b: u8,
+    pv_sub_sc_b: u8,
+    pv_avg_h: u8,
+    pv_avg_sc_h: u8,
+    pv_avg_b: u8,
+    pv_avg_sc_b: u8,
+    pv_avgu_h: u8,
+    pv_avgu_sc_h: u8,
+    pv_avgu_b: u8,
+    pv_avgu_sc_b: u8,
+    pv_min_h: u8,
+    pv_min_sc_h: u8,
+    pv_min_b: u8,
+    pv_min_sc_b: u8,
+    pv_minu_h: u8,
+    pv_minu_sc_h: u8,
+    pv_minu_b: u8,
+    pv_minu_sc_b: u8,
+    pv_max_h: u8,
+    pv_max_sc_h: u8,
+    pv_max_b: u8,
+    pv_max_sc_b: u8,
+    pv_maxu_h: u8,
+    pv_maxu_sc_h: u8,
+    pv_maxu_b: u8,
+    pv_maxu_sc_b: u8,
+    pv_srl_h: u8,
+    pv_srl_sc_h: u8,
+    pv_srl_b: u8,
+    pv_srl_sc_b: u8,
+    pv_sra_h: u8,
+    pv_sra_sc_h: u8,
+    pv_sra_b: u8,
+    pv_sra_sc_b: u8,
+    pv_sll_h: u8,
+    pv_sll_sc_h: u8,
+    pv_sll_b: u8,
+    pv_sll_sc_b: u8,
+    pv_or_h: u8,
+    pv_or_sc_h: u8,
+    pv_or_b: u8,
+    pv_or_sc_b: u8,
+    pv_xor_h: u8,
+    pv_xor_sc_h: u8,
+    pv_xor_b: u8,
+    pv_xor_sc_b: u8,
+    pv_and_h: u8,
+    pv_and_sc_h: u8,
+    pv_and_b: u8,
+    pv_and_sc_b: u8,
+    pv_dotsp_h: u8,
+    pv_dotsp_sc_h: u8,
+    pv_dotsp_b: u8,
+    pv_dotsp_sc_b: u8,
+    pv_dotup_h: u8,
+    pv_dotup_sc_h: u8,
+    pv_dotup_b: u8,
+    pv_dotup_sc_b: u8,
+    pv_dotusp_h: u8,
+    pv_dotusp_sc_h: u8,
+    pv_dotusp_b: u8,
+    pv_dotusp_sc_b: u8,
+    pv_sdotsp_h: u8,
+    pv_sdotsp_sc_h: u8,
+    pv_sdotsp_b: u8,
+    pv_sdotsp_sc_b: u8,
+    pv_sdotup_h: u8,
+    pv_sdotup_sc_h: u8,
+    pv_sdotup_b: u8,
+    pv_sdotup_sc_b: u8,
+    pv_sdotusp_h: u8,
+    pv_sdotusp_sc_h: u8,
+    pv_sdotusp_b: u8,
+    pv_sdotusp_sc_b: u8,
+    pv_cmpeq_h: u8,
+    pv_cmpeq_sc_h: u8,
+    pv_cmpeq_b: u8,
+    pv_cmpeq_sc_b: u8,
+    pv_cmpne_h: u8,
+    pv_cmpne_sc_h: u8,
+    pv_cmpne_b: u8,
+    pv_cmpne_sc_b: u8,
+    pv_cmpgt_h: u8,
+    pv_cmpgt_sc_h: u8,
+    pv_cmpgt_b: u8,
+    pv_cmpgt_sc_b: u8,
+    pv_cmpge_h: u8,
+    pv_cmpge_sc_h: u8,
+    pv_cmpge_b: u8,
+    pv_cmpge_sc_b: u8,
+    pv_cmplt_h: u8,
+    pv_cmplt_sc_h: u8,
+    pv_cmplt_b: u8,
+    pv_cmplt_sc_b: u8,
+    pv_cmple_h: u8,
+    pv_cmple_sc_h: u8,
+    pv_cmple_b: u8,
+    pv_cmple_sc_b: u8,
+    pv_cmpgtu_h: u8,
+    pv_cmpgtu_sc_h: u8,
+    pv_cmpgtu_b: u8,
+    pv_cmpgtu_sc_b: u8,
+    pv_cmpgeu_h: u8,
+    pv_cmpgeu_sc_h: u8,
+    pv_cmpgeu_b: u8,
+    pv_cmpgeu_sc_b: u8,
+    pv_cmpltu_h: u8,
+    pv_cmpltu_sc_h: u8,
+    pv_cmpltu_b: u8,
+    pv_cmpltu_sc_b: u8,
+    pv_cmpleu_h: u8,
+    pv_cmpleu_sc_h: u8,
+    pv_cmpleu_b: u8,
+    pv_cmpleu_sc_b: u8,
+    pv_add_h_div2: u8,
+    pv_add_h_div4: u8,
+    pv_add_h_div8: u8,
+    pv_sub_h_div2: u8,
+    pv_sub_h_div4: u8,
+    pv_sub_h_div8: u8,
+    pv_shuffle_h: u8,
+    pv_shuffle_b: u8,
+    pv_shuffle2_h: u8,
+    pv_shuffle2_b: u8,
+    pv_pack: u8,
+    pv_pack_h: u8,
+    pv_packhi_b: u8,
+    pv_packlo_b: u8,
     fsgnj_h: u8,
     fsgnjn_h: u8,
     fsgnjx_h: u8,
@@ -3462,45 +4230,22 @@ pub struct Latency {
     vfdotpex_h_r_b: u8,
     vfndotpex_h_b: u8,
     vfndotpex_h_r_b: u8,
-    // Format::RdRs1Rs2Rs3
-    cmix: u8,
-    cmov: u8,
-    fsl: u8,
-    fsr: u8,
-    // Format::RdRs1Rs3Shamt
-    fsri: u8,
     // Format::RdRs1Shamt
     slli: u8,
     srli: u8,
     srai: u8,
-    sloi: u8,
-    sroi: u8,
-    rori: u8,
-    sbclri: u8,
-    sbseti: u8,
-    sbinvi: u8,
-    sbexti: u8,
-    gorci: u8,
-    grevi: u8,
     // Format::RdRs1Shamtw
     slliw: u8,
     srliw: u8,
     sraiw: u8,
-    shfli: u8,
-    unshfli: u8,
-    // Format::RdRs2
-    dmstat: u8,
-    scfgr: u8,
-    // Format::Rs1
-    dmrep: u8,
     // Format::Rs1Rs2
-    sfence_vma: u8,
-    hfence_bvma: u8,
+    hfence_vvma: u8,
     hfence_gvma: u8,
-    dmsrc: u8,
-    dmdst: u8,
-    dmstr: u8,
-    scfgw: u8,
+    hsv_b: u8,
+    hsv_h: u8,
+    hsv_w: u8,
+    hsv_d: u8,
+    sfence_vma: u8,
 }
 
 /// Struct to store the latency of each instruction.
@@ -3514,6 +4259,45 @@ impl Default for Latency {
             mret: 1,
             dret: 1,
             wfi: 1,
+            c_addi4spn: 1,
+            c_fld: 1,
+            c_lw: 1,
+            c_flw: 1,
+            c_fsd: 1,
+            c_sw: 1,
+            c_fsw: 1,
+            c_addi: 1,
+            c_jal: 1,
+            c_li: 1,
+            c_lui: 1,
+            c_srli: 1,
+            c_srai: 1,
+            c_andi: 1,
+            c_sub: 1,
+            c_xor: 1,
+            c_or: 1,
+            c_and: 1,
+            c_j: 1,
+            c_beqz: 1,
+            c_bnez: 1,
+            c_slli: 1,
+            c_fldsp: 1,
+            c_lwsp: 1,
+            c_flwsp: 1,
+            c_mv: 1,
+            c_add: 1,
+            c_fsdsp: 1,
+            c_swsp: 1,
+            c_fswsp: 1,
+            c_subw: 1,
+            c_addw: 1,
+            p_extract: 1,
+            p_extractu: 1,
+            p_insert: 1,
+            p_bset: 1,
+            p_bclr: 1,
+            p_addn: 1,
+            p_addun: 1,
             lr_w: 1,
             lr_d: 1,
             amoadd_w: 1,
@@ -3536,6 +4320,8 @@ impl Default for Latency {
             amomaxu_d: 1,
             amoswap_d: 1,
             sc_d: 1,
+            p_beqimm: 1,
+            p_bneimm: 1,
             beq: 1,
             bne: 1,
             blt: 1,
@@ -3543,8 +4329,6 @@ impl Default for Latency {
             bltu: 1,
             bgeu: 1,
             fence: 1,
-            scfgri: 1,
-            irep: 1,
             jalr: 1,
             addi: 1,
             slti: 1,
@@ -3552,29 +4336,31 @@ impl Default for Latency {
             xori: 1,
             ori: 1,
             andi: 1,
-            addiw: 1,
             lb: 1,
             lh: 1,
             lw: 1,
-            ld: 1,
             lbu: 1,
             lhu: 1,
-            lwu: 1,
             fence_i: 1,
+            addiw: 1,
+            ld: 1,
+            lwu: 1,
+            flw: 1,
+            fld: 1,
+            flq: 1,
             csrrw: 1,
             csrrs: 1,
             csrrc: 1,
             csrrwi: 1,
             csrrsi: 1,
             csrrci: 1,
-            flw: 1,
-            fld: 1,
-            flq: 1,
+            p_lb_irpost: 1,
+            p_lbu_irpost: 1,
+            p_lh_irpost: 1,
+            p_lhu_irpost: 1,
+            p_lw_irpost: 1,
             flh: 1,
             flb: 1,
-            scfgwi: 1,
-            frep_o: 1,
-            frep_i: 1,
             sb: 1,
             sh: 1,
             sw: 1,
@@ -3582,44 +4368,124 @@ impl Default for Latency {
             fsw: 1,
             fsd: 1,
             fsq: 1,
+            p_sb_irpost: 1,
+            p_sh_irpost: 1,
+            p_sw_irpost: 1,
             fsh: 1,
             fsb: 1,
             lui: 1,
             auipc: 1,
-            dmstati: 1,
-            dmcpyi: 1,
+            p_clip: 1,
+            p_clipu: 1,
+            pv_add_sci_h: 1,
+            pv_add_sci_b: 1,
+            pv_sub_sci_h: 1,
+            pv_sub_sci_b: 1,
+            pv_avg_sci_h: 1,
+            pv_avg_sci_b: 1,
+            pv_avgu_sci_h: 1,
+            pv_avgu_sci_b: 1,
+            pv_min_sci_h: 1,
+            pv_min_sci_b: 1,
+            pv_minu_sci_h: 1,
+            pv_minu_sci_b: 1,
+            pv_max_sci_h: 1,
+            pv_max_sci_b: 1,
+            pv_maxu_sci_h: 1,
+            pv_maxu_sci_b: 1,
+            pv_srl_sci_h: 1,
+            pv_srl_sci_b: 1,
+            pv_sra_sci_h: 1,
+            pv_sra_sci_b: 1,
+            pv_sll_sci_h: 1,
+            pv_sll_sci_b: 1,
+            pv_or_sci_h: 1,
+            pv_or_sci_b: 1,
+            pv_xor_sci_h: 1,
+            pv_xor_sci_b: 1,
+            pv_and_sci_h: 1,
+            pv_and_sci_b: 1,
+            pv_extract_h: 1,
+            pv_extract_b: 1,
+            pv_extractu_h: 1,
+            pv_extractu_b: 1,
+            pv_insert_h: 1,
+            pv_insert_b: 1,
+            pv_dotsp_sci_h: 1,
+            pv_dotsp_sci_b: 1,
+            pv_dotup_sci_h: 1,
+            pv_dotup_sci_b: 1,
+            pv_dotusp_sci_h: 1,
+            pv_dotusp_sci_b: 1,
+            pv_sdotsp_sci_h: 1,
+            pv_sdotsp_sci_b: 1,
+            pv_sdotup_sci_h: 1,
+            pv_sdotup_sci_b: 1,
+            pv_sdotusp_sci_h: 1,
+            pv_sdotusp_sci_b: 1,
+            pv_cmpeq_sci_h: 1,
+            pv_cmpeq_sci_b: 1,
+            pv_cmpne_sci_h: 1,
+            pv_cmpne_sci_b: 1,
+            pv_cmpgt_sci_h: 1,
+            pv_cmpgt_sci_b: 1,
+            pv_cmpge_sci_h: 1,
+            pv_cmpge_sci_b: 1,
+            pv_cmplt_sci_h: 1,
+            pv_cmplt_sci_b: 1,
+            pv_cmple_sci_h: 1,
+            pv_cmple_sci_b: 1,
+            pv_cmpgtu_sci_h: 1,
+            pv_cmpgtu_sci_b: 1,
+            pv_cmpgeu_sci_h: 1,
+            pv_cmpgeu_sci_b: 1,
+            pv_cmpltu_sci_h: 1,
+            pv_cmpltu_sci_b: 1,
+            pv_cmpleu_sci_h: 1,
+            pv_cmpleu_sci_b: 1,
+            pv_shuffle_sci_h: 1,
+            pv_shufflei0_sci_b: 1,
+            pv_shufflei1_sci_b: 1,
+            pv_shufflei2_sci_b: 1,
+            pv_shufflei3_sci_b: 1,
             jal: 1,
+            p_sb_rrpost: 1,
+            p_sh_rrpost: 1,
+            p_sw_rrpost: 1,
+            p_sb_rr: 1,
+            p_sh_rr: 1,
+            p_sw_rr: 1,
             fsqrt_s: 1,
+            fcvt_w_s: 1,
+            fcvt_wu_s: 1,
+            fcvt_s_w: 1,
+            fcvt_s_wu: 1,
+            fcvt_l_s: 1,
+            fcvt_lu_s: 1,
+            fcvt_s_l: 1,
+            fcvt_s_lu: 1,
             fcvt_s_d: 1,
             fcvt_d_s: 1,
             fsqrt_d: 1,
+            fcvt_w_d: 1,
+            fcvt_wu_d: 1,
+            fcvt_d_w: 1,
+            fcvt_d_wu: 1,
+            fcvt_l_d: 1,
+            fcvt_lu_d: 1,
+            fcvt_d_l: 1,
+            fcvt_d_lu: 1,
             fcvt_s_q: 1,
             fcvt_q_s: 1,
             fcvt_d_q: 1,
             fcvt_q_d: 1,
             fsqrt_q: 1,
-            fcvt_w_s: 1,
-            fcvt_wu_s: 1,
-            fcvt_l_s: 1,
-            fcvt_lu_s: 1,
-            fcvt_w_d: 1,
-            fcvt_wu_d: 1,
-            fcvt_l_d: 1,
-            fcvt_lu_d: 1,
             fcvt_w_q: 1,
             fcvt_wu_q: 1,
-            fcvt_l_q: 1,
-            fcvt_lu_q: 1,
-            fcvt_s_w: 1,
-            fcvt_s_wu: 1,
-            fcvt_s_l: 1,
-            fcvt_s_lu: 1,
-            fcvt_d_w: 1,
-            fcvt_d_wu: 1,
-            fcvt_d_l: 1,
-            fcvt_d_lu: 1,
             fcvt_q_w: 1,
             fcvt_q_wu: 1,
+            fcvt_l_q: 1,
+            fcvt_lu_q: 1,
             fcvt_q_l: 1,
             fcvt_q_lu: 1,
             fsqrt_h: 1,
@@ -3671,26 +4537,33 @@ impl Default for Latency {
             fmsub_h: 1,
             fnmsub_h: 1,
             fnmadd_h: 1,
-            clz: 1,
-            ctz: 1,
-            pcnt: 1,
-            sext_b: 1,
-            sext_h: 1,
-            crc32_b: 1,
-            crc32_h: 1,
-            crc32_w: 1,
-            crc32c_b: 1,
-            crc32c_h: 1,
-            crc32c_w: 1,
+            hlv_b: 1,
+            hlv_bu: 1,
+            hlv_h: 1,
+            hlv_hu: 1,
+            hlvx_hu: 1,
+            hlv_w: 1,
+            hlvx_wu: 1,
+            hlv_wu: 1,
+            hlv_d: 1,
             fmv_x_w: 1,
             fclass_s: 1,
-            fmv_x_d: 1,
-            fclass_d: 1,
-            fmv_x_q: 1,
-            fclass_q: 1,
             fmv_w_x: 1,
+            fclass_d: 1,
+            fmv_x_d: 1,
             fmv_d_x: 1,
-            fmv_q_x: 1,
+            fclass_q: 1,
+            p_abs: 1,
+            p_exths: 1,
+            p_exthz: 1,
+            p_extbs: 1,
+            p_extbz: 1,
+            p_clb: 1,
+            p_fl1: 1,
+            p_ff1: 1,
+            p_ror: 1,
+            pv_abs_h: 1,
+            pv_abs_b: 1,
             fmv_x_h: 1,
             fclass_h: 1,
             fmv_h_x: 1,
@@ -3776,62 +4649,190 @@ impl Default for Latency {
             divuw: 1,
             remw: 1,
             remuw: 1,
-            andn: 1,
-            orn: 1,
-            xnor: 1,
-            slo: 1,
-            sro: 1,
-            rol: 1,
-            ror: 1,
-            sbclr: 1,
-            sbset: 1,
-            sbinv: 1,
-            sbext: 1,
-            gorc: 1,
-            grev: 1,
-            sh1add: 1,
-            sh2add: 1,
-            sh3add: 1,
-            clmul: 1,
-            clmulr: 1,
-            clmulh: 1,
-            min: 1,
-            max: 1,
-            minu: 1,
-            maxu: 1,
-            shfl: 1,
-            unshfl: 1,
-            bext: 1,
-            bdep: 1,
-            pack: 1,
-            packu: 1,
-            packh: 1,
-            bfp: 1,
             fsgnj_s: 1,
             fsgnjn_s: 1,
             fsgnjx_s: 1,
             fmin_s: 1,
             fmax_s: 1,
+            fle_s: 1,
+            flt_s: 1,
+            feq_s: 1,
             fsgnj_d: 1,
             fsgnjn_d: 1,
             fsgnjx_d: 1,
             fmin_d: 1,
             fmax_d: 1,
+            fle_d: 1,
+            flt_d: 1,
+            feq_d: 1,
             fsgnj_q: 1,
             fsgnjn_q: 1,
             fsgnjx_q: 1,
             fmin_q: 1,
             fmax_q: 1,
-            fle_s: 1,
-            flt_s: 1,
-            feq_s: 1,
-            fle_d: 1,
-            flt_d: 1,
-            feq_d: 1,
             fle_q: 1,
             flt_q: 1,
             feq_q: 1,
-            dmcpy: 1,
+            p_extractr: 1,
+            p_extractur: 1,
+            p_insertr: 1,
+            p_bsetr: 1,
+            p_bclrr: 1,
+            p_cnt: 1,
+            p_clipr: 1,
+            p_clipur: 1,
+            p_mac: 1,
+            p_msu: 1,
+            p_min: 1,
+            p_minu: 1,
+            p_max: 1,
+            p_maxu: 1,
+            p_lb_rrpost: 1,
+            p_lbu_rrpost: 1,
+            p_lh_rrpost: 1,
+            p_lhu_rrpost: 1,
+            p_lw_rrpost: 1,
+            p_lb_rr: 1,
+            p_lbu_rr: 1,
+            p_lh_rr: 1,
+            p_lhu_rr: 1,
+            p_lw_rr: 1,
+            p_slet: 1,
+            p_sletu: 1,
+            pv_add_h: 1,
+            pv_add_sc_h: 1,
+            pv_add_b: 1,
+            pv_add_sc_b: 1,
+            pv_sub_h: 1,
+            pv_sub_sc_h: 1,
+            pv_sub_b: 1,
+            pv_sub_sc_b: 1,
+            pv_avg_h: 1,
+            pv_avg_sc_h: 1,
+            pv_avg_b: 1,
+            pv_avg_sc_b: 1,
+            pv_avgu_h: 1,
+            pv_avgu_sc_h: 1,
+            pv_avgu_b: 1,
+            pv_avgu_sc_b: 1,
+            pv_min_h: 1,
+            pv_min_sc_h: 1,
+            pv_min_b: 1,
+            pv_min_sc_b: 1,
+            pv_minu_h: 1,
+            pv_minu_sc_h: 1,
+            pv_minu_b: 1,
+            pv_minu_sc_b: 1,
+            pv_max_h: 1,
+            pv_max_sc_h: 1,
+            pv_max_b: 1,
+            pv_max_sc_b: 1,
+            pv_maxu_h: 1,
+            pv_maxu_sc_h: 1,
+            pv_maxu_b: 1,
+            pv_maxu_sc_b: 1,
+            pv_srl_h: 1,
+            pv_srl_sc_h: 1,
+            pv_srl_b: 1,
+            pv_srl_sc_b: 1,
+            pv_sra_h: 1,
+            pv_sra_sc_h: 1,
+            pv_sra_b: 1,
+            pv_sra_sc_b: 1,
+            pv_sll_h: 1,
+            pv_sll_sc_h: 1,
+            pv_sll_b: 1,
+            pv_sll_sc_b: 1,
+            pv_or_h: 1,
+            pv_or_sc_h: 1,
+            pv_or_b: 1,
+            pv_or_sc_b: 1,
+            pv_xor_h: 1,
+            pv_xor_sc_h: 1,
+            pv_xor_b: 1,
+            pv_xor_sc_b: 1,
+            pv_and_h: 1,
+            pv_and_sc_h: 1,
+            pv_and_b: 1,
+            pv_and_sc_b: 1,
+            pv_dotsp_h: 1,
+            pv_dotsp_sc_h: 1,
+            pv_dotsp_b: 1,
+            pv_dotsp_sc_b: 1,
+            pv_dotup_h: 1,
+            pv_dotup_sc_h: 1,
+            pv_dotup_b: 1,
+            pv_dotup_sc_b: 1,
+            pv_dotusp_h: 1,
+            pv_dotusp_sc_h: 1,
+            pv_dotusp_b: 1,
+            pv_dotusp_sc_b: 1,
+            pv_sdotsp_h: 1,
+            pv_sdotsp_sc_h: 1,
+            pv_sdotsp_b: 1,
+            pv_sdotsp_sc_b: 1,
+            pv_sdotup_h: 1,
+            pv_sdotup_sc_h: 1,
+            pv_sdotup_b: 1,
+            pv_sdotup_sc_b: 1,
+            pv_sdotusp_h: 1,
+            pv_sdotusp_sc_h: 1,
+            pv_sdotusp_b: 1,
+            pv_sdotusp_sc_b: 1,
+            pv_cmpeq_h: 1,
+            pv_cmpeq_sc_h: 1,
+            pv_cmpeq_b: 1,
+            pv_cmpeq_sc_b: 1,
+            pv_cmpne_h: 1,
+            pv_cmpne_sc_h: 1,
+            pv_cmpne_b: 1,
+            pv_cmpne_sc_b: 1,
+            pv_cmpgt_h: 1,
+            pv_cmpgt_sc_h: 1,
+            pv_cmpgt_b: 1,
+            pv_cmpgt_sc_b: 1,
+            pv_cmpge_h: 1,
+            pv_cmpge_sc_h: 1,
+            pv_cmpge_b: 1,
+            pv_cmpge_sc_b: 1,
+            pv_cmplt_h: 1,
+            pv_cmplt_sc_h: 1,
+            pv_cmplt_b: 1,
+            pv_cmplt_sc_b: 1,
+            pv_cmple_h: 1,
+            pv_cmple_sc_h: 1,
+            pv_cmple_b: 1,
+            pv_cmple_sc_b: 1,
+            pv_cmpgtu_h: 1,
+            pv_cmpgtu_sc_h: 1,
+            pv_cmpgtu_b: 1,
+            pv_cmpgtu_sc_b: 1,
+            pv_cmpgeu_h: 1,
+            pv_cmpgeu_sc_h: 1,
+            pv_cmpgeu_b: 1,
+            pv_cmpgeu_sc_b: 1,
+            pv_cmpltu_h: 1,
+            pv_cmpltu_sc_h: 1,
+            pv_cmpltu_b: 1,
+            pv_cmpltu_sc_b: 1,
+            pv_cmpleu_h: 1,
+            pv_cmpleu_sc_h: 1,
+            pv_cmpleu_b: 1,
+            pv_cmpleu_sc_b: 1,
+            pv_add_h_div2: 1,
+            pv_add_h_div4: 1,
+            pv_add_h_div8: 1,
+            pv_sub_h_div2: 1,
+            pv_sub_h_div4: 1,
+            pv_sub_h_div8: 1,
+            pv_shuffle_h: 1,
+            pv_shuffle_b: 1,
+            pv_shuffle2_h: 1,
+            pv_shuffle2_b: 1,
+            pv_pack: 1,
+            pv_pack_h: 1,
+            pv_packhi_b: 1,
+            pv_packlo_b: 1,
             fsgnj_h: 1,
             fsgnjn_h: 1,
             fsgnjx_h: 1,
@@ -3974,38 +4975,19 @@ impl Default for Latency {
             vfdotpex_h_r_b: 1,
             vfndotpex_h_b: 1,
             vfndotpex_h_r_b: 1,
-            cmix: 1,
-            cmov: 1,
-            fsl: 1,
-            fsr: 1,
-            fsri: 1,
             slli: 1,
             srli: 1,
             srai: 1,
-            sloi: 1,
-            sroi: 1,
-            rori: 1,
-            sbclri: 1,
-            sbseti: 1,
-            sbinvi: 1,
-            sbexti: 1,
-            gorci: 1,
-            grevi: 1,
             slliw: 1,
             srliw: 1,
             sraiw: 1,
-            shfli: 1,
-            unshfli: 1,
-            dmstat: 1,
-            scfgr: 1,
-            dmrep: 1,
-            sfence_vma: 1,
-            hfence_bvma: 1,
+            hfence_vvma: 1,
             hfence_gvma: 1,
-            dmsrc: 1,
-            dmdst: 1,
-            dmstr: 1,
-            scfgw: 1,
+            hsv_b: 1,
+            hsv_h: 1,
+            hsv_w: 1,
+            hsv_d: 1,
+            sfence_vma: 1,
         }
     }
 }
@@ -4016,6 +4998,18 @@ pub enum Csr {
     Fflags = 0x001,
     Frm = 0x002,
     Fcsr = 0x003,
+    Ustatus = 0x000,
+    Uie = 0x004,
+    Utvec = 0x005,
+    Vstart = 0x008,
+    Vxsat = 0x009,
+    Vxrm = 0x00a,
+    Vcsr = 0x00f,
+    Uscratch = 0x040,
+    Uepc = 0x041,
+    Ucause = 0x042,
+    Utval = 0x043,
+    Uip = 0x044,
     Fmode = 0x800,
     Cycle = 0xc00,
     Time = 0xc01,
@@ -4049,7 +5043,12 @@ pub enum Csr {
     Hpmcounter29 = 0xc1d,
     Hpmcounter30 = 0xc1e,
     Hpmcounter31 = 0xc1f,
+    Vl = 0xc20,
+    Vtype = 0xc21,
+    Vlenb = 0xc22,
     Sstatus = 0x100,
+    Sedeleg = 0x102,
+    Sideleg = 0x103,
     Sie = 0x104,
     Stvec = 0x105,
     Scounteren = 0x106,
@@ -4059,19 +5058,28 @@ pub enum Csr {
     Stval = 0x143,
     Sip = 0x144,
     Satp = 0x180,
-    Bsstatus = 0x200,
-    Bsie = 0x204,
-    Bstvec = 0x205,
-    Bsscratch = 0x240,
-    Bsepc = 0x241,
-    Bscause = 0x242,
-    Bstval = 0x243,
-    Bsip = 0x244,
-    Bsatp = 0x280,
-    Hstatus = 0xa00,
-    Hedeleg = 0xa02,
-    Hideleg = 0xa03,
-    Hgatp = 0xa80,
+    Vsstatus = 0x200,
+    Vsie = 0x204,
+    Vstvec = 0x205,
+    Vsscratch = 0x240,
+    Vsepc = 0x241,
+    Vscause = 0x242,
+    Vstval = 0x243,
+    Vsip = 0x244,
+    Vsatp = 0x280,
+    Hstatus = 0x600,
+    Hedeleg = 0x602,
+    Hideleg = 0x603,
+    Hie = 0x604,
+    Htimedelta = 0x605,
+    Hcounteren = 0x606,
+    Hgeie = 0x607,
+    Htval = 0x643,
+    Hip = 0x644,
+    Hvip = 0x645,
+    Htinst = 0x64a,
+    Hgatp = 0x680,
+    Hgeip = 0xe12,
     Utvt = 0x007,
     Unxti = 0x045,
     Uintstatus = 0x046,
@@ -4094,11 +5102,14 @@ pub enum Csr {
     Mie = 0x304,
     Mtvec = 0x305,
     Mcounteren = 0x306,
+    Mcountinhibit = 0x320,
     Mscratch = 0x340,
     Mepc = 0x341,
     Mcause = 0x342,
     Mtval = 0x343,
     Mip = 0x344,
+    Mtinst = 0x34a,
+    Mtval2 = 0x34b,
     Pmpcfg0 = 0x3a0,
     Pmpcfg1 = 0x3a1,
     Pmpcfg2 = 0x3a2,
@@ -4125,7 +5136,8 @@ pub enum Csr {
     Tdata3 = 0x7a3,
     Dcsr = 0x7b0,
     Dpc = 0x7b1,
-    Dscratch = 0x7b2,
+    Dscratch0 = 0x7b2,
+    Dscratch1 = 0x7b3,
     Mcycle = 0xb00,
     Minstret = 0xb02,
     Mhpmcounter3 = 0xb03,
@@ -4186,12 +5198,14 @@ pub enum Csr {
     Mhpmevent29 = 0x33d,
     Mhpmevent30 = 0x33e,
     Mhpmevent31 = 0x33f,
+    Trace = 0x7d0,
     Mvendorid = 0xf11,
     Marchid = 0xf12,
     Mimpid = 0xf13,
     Mhartid = 0xf14,
     Ssr = 0x7c0,
     Fpmode = 0x7c1,
+    Htimedeltah = 0x615,
     Cycleh = 0xc80,
     Timeh = 0xc81,
     Instreth = 0xc82,
@@ -4224,6 +5238,7 @@ pub enum Csr {
     Hpmcounter29h = 0xc9d,
     Hpmcounter30h = 0xc9e,
     Hpmcounter31h = 0xc9f,
+    Mstatush = 0x310,
     Mcycleh = 0xb80,
     Minstreth = 0xb82,
     Mhpmcounter3h = 0xb83,

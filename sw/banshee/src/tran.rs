@@ -72,33 +72,33 @@ impl SequencerContext {
     }
 
     /// Initialize a sequence job.
-    fn init_rep(
-        &mut self,
-        max_inst: u8,
-        is_outer: bool,
-        stagger_max: u8,
-        stagger_mask: u8,
-    ) -> Result<()> {
-        if !self.active {
-            self.active = true;
-            self.max_inst = max_inst;
-            self.is_outer = is_outer;
-            self.stagger_mask = stagger_mask;
-            self.stagger_max = stagger_max;
-            self.buffer_pos = 0;
-            if max_inst < SEQ_BUFFER_LEN {
-                Ok(())
-            } else {
-                Err(anyhow!(
-                    "Sequencer buffer not large enough: set {}, max {}",
-                    max_inst,
-                    SEQ_BUFFER_LEN
-                ))
-            }
-        } else {
-            Err(anyhow!("Illegal sequencer repetition nesting"))
-        }
-    }
+    // fn init_rep(
+    //     &mut self,
+    //     max_inst: u8,
+    //     is_outer: bool,
+    //     stagger_max: u8,
+    //     stagger_mask: u8,
+    // ) -> Result<()> {
+    //     if !self.active {
+    //         self.active = true;
+    //         self.max_inst = max_inst;
+    //         self.is_outer = is_outer;
+    //         self.stagger_mask = stagger_mask;
+    //         self.stagger_max = stagger_max;
+    //         self.buffer_pos = 0;
+    //         if max_inst < SEQ_BUFFER_LEN {
+    //             Ok(())
+    //         } else {
+    //             Err(anyhow!(
+    //                 "Sequencer buffer not large enough: set {}, max {}",
+    //                 max_inst,
+    //                 SEQ_BUFFER_LEN
+    //             ))
+    //         }
+    //     } else {
+    //         Err(anyhow!("Illegal sequencer repetition nesting"))
+    //     }
+    // }
 
     /// Push an instruction into the sequence buffer.
     fn push_rep_instruction(&mut self, addr: u64, inst: riscv::Format) -> Result<()> {
@@ -994,28 +994,32 @@ impl<'a> InstructionTranslator<'a> {
         match self.inst {
             riscv::Format::AqrlRdRs1(x) => self.emit_aqrl_rd_rs1(x),
             riscv::Format::AqrlRdRs1Rs2(x) => self.emit_aqrl_rd_rs1_rs2(x),
+            riscv::Format::Bimm12hiBimm12loImm5Rs1(x) => self.emit_bimm12hi_bimm12lo_imm5_rs1(x),
             riscv::Format::Bimm12hiBimm12loRs1Rs2(x) => self.emit_bimm12hi_bimm12lo_rs1_rs2(x),
             riscv::Format::FmPredRdRs1Succ(x) => self.emit_fm_pred_rd_rs1_succ(x),
-            riscv::Format::Imm5Rd(x) => self.emit_imm5_rd(x),
-            riscv::Format::Imm12Rd(x) => self.emit_imm12_rd(x),
+            // riscv::Format::Imm5Rd(x) => self.emit_imm5_rd(x),
+            // riscv::Format::Imm12Rd(x) => self.emit_imm12_rd(x),
             riscv::Format::Imm5RdRs1(x) => self.emit_imm5_rd_rs1(x),
+            riscv::Format::Imm6RdRs1(x) => self.emit_imm6_rd_rs1(x),
             riscv::Format::Imm12RdRs1(x) => self.emit_imm12_rd_rs1(x),
-            riscv::Format::Imm12Rs1StaggerMaskStaggerMax(x) => {
-                self.emit_imm12_rs1_staggermask_staggermax(x, fseq)
-            }
-            riscv::Format::Imm12Rs1(x) => self.emit_imm12_rs1(x),
+            // riscv::Format::Imm12Rs1StaggerMaskStaggerMax(x) => {
+            //     self.emit_imm12_rs1_staggermask_staggermax(x, fseq)
+            // }
+            // riscv::Format::Imm12Rs1(x) => self.emit_imm12_rs1(x),
             riscv::Format::Imm12hiImm12loRs1Rs2(x) => self.emit_imm12hi_imm12lo_rs1_rs2(x),
             riscv::Format::Imm20Rd(x) => self.emit_imm20_rd(x),
             riscv::Format::Jimm20Rd(x) => self.emit_jimm20_rd(x),
+            riscv::Format::Prs3Rs1Rs2(x) => self.emit_prs3_rs1_rs2(x),
+            riscv::Format::Luimm5RdRs1Rs2(x) => self.emit_luimm5_rd_rs1_rs2(x),
             riscv::Format::RdRmRs1(x) => self.emit_rd_rm_rs1(x),
             riscv::Format::RdRmRs1Rs2(x) => self.emit_rd_rm_rs1_rs2(x),
             riscv::Format::RdRmRs1Rs2Rs3(x) => self.emit_rd_rm_rs1_rs2_rs3(x),
             riscv::Format::RdRs1(x) => self.emit_rd_rs1(x),
             riscv::Format::RdRs1Rs2(x) => self.emit_rd_rs1_rs2(x),
             riscv::Format::RdRs1Shamt(x) => self.emit_rd_rs1_shamt(x),
-            riscv::Format::Rs1(x) => self.emit_rs1(x),
-            riscv::Format::Rs1Rs2(x) => self.emit_rs1_rs2(x),
-            riscv::Format::RdRs2(x) => self.emit_rd_rs2(x),
+            // riscv::Format::Rs1(x) => self.emit_rs1(x),
+            // riscv::Format::Rs1Rs2(x) => self.emit_rs1_rs2(x),
+            // riscv::Format::RdRs2(x) => self.emit_rd_rs2(x),
             riscv::Format::Unit(x) => self.emit_unit(x),
             _ => {
                 if self.inst.raw() == 0 {
@@ -1058,7 +1062,7 @@ impl<'a> InstructionTranslator<'a> {
         // Get the address from the register
         let addr = self.read_reg(data.rs1);
 
-        self.trace_access(TraceAccess::ReadMem, addr);
+        self.trace_access(TraceAccess::ReadMem(data.rd as u8), addr);
 
         // Start emitting LLVM IR
         let bb_end = LLVMCreateBasicBlockInContext(self.section.engine.context, NONAME);
@@ -1477,6 +1481,39 @@ impl<'a> InstructionTranslator<'a> {
         Ok(())
     }
 
+    unsafe fn emit_bimm12hi_bimm12lo_imm5_rs1(
+        &self,
+        data: riscv::FormatBimm12hiBimm12loImm5Rs1,
+    ) -> Result<()> {
+        let target = (self.addr as i64).wrapping_add(data.bimm() as i64) as u64;
+        trace!("{} x{}, x{}, 0x{:x}", data.op, data.rs1, data.imm5, target);
+        let rs1 = self.read_reg(data.rs1);
+        let imm5 = LLVMBuildSExt(
+            self.builder,
+            LLVMConstInt(
+                LLVMIntType(5), // extract only 5 bits to sext
+                data.imm5 as u64,
+                1,
+            ),
+            LLVMInt32Type(),
+            NONAME,
+        );
+        let name = format!("{}_x{}_x{}\0", data.op, data.rs1, data.imm5);
+        let name = name.as_ptr() as *const _;
+        let predicate = match data.op {
+            riscv::OpcodeBimm12hiBimm12loImm5Rs1::PBeqimm => LLVMIntEQ,
+            riscv::OpcodeBimm12hiBimm12loImm5Rs1::PBneimm => LLVMIntNE,
+        };
+        let cmp = LLVMBuildICmp(self.builder, predicate, rs1, imm5, name);
+        let bb =
+            LLVMCreateBasicBlockInContext(self.section.engine.context, b"\0".as_ptr() as *const _);
+        LLVMInsertExistingBasicBlockAfterInsertBlock(self.builder, bb);
+        self.emit_trace();
+        LLVMBuildCondBr(self.builder, cmp, self.section.elf.inst_bbs[&target], bb);
+        LLVMPositionBuilderAtEnd(self.builder, bb);
+        Ok(())
+    }
+
     unsafe fn emit_bimm12hi_bimm12lo_rs1_rs2(
         &self,
         data: riscv::FormatBimm12hiBimm12loRs1Rs2,
@@ -1531,36 +1568,36 @@ impl<'a> InstructionTranslator<'a> {
         Ok(())
     }
 
-    unsafe fn emit_imm12_rs1(&self, data: riscv::FormatImm12Rs1) -> Result<()> {
-        let imm = data.imm();
-        trace!("{} x{}, {}", data.op, data.rs1, imm);
+    // unsafe fn emit_imm12_rs1(&self, data: riscv::FormatImm12Rs1) -> Result<()> {
+    //     let imm = data.imm();
+    //     trace!("{} x{}, {}", data.op, data.rs1, imm);
 
-        // Compute the address.
-        let rs1 = self.read_reg(data.rs1);
+    //     // Compute the address.
+    //     let rs1 = self.read_reg(data.rs1);
 
-        // Perform the operation.
-        // suppress compiler warning that detects the bail! statement as unrechable
-        // Scfgwi is currently the OpcodeImm12Rs1 but this might change
-        #[allow(unreachable_patterns)]
-        match data.op {
-            riscv::OpcodeImm12Rs1::Scfgwi => {
-                // ssr write immediate holds address offset in imm12, content in rs1
-                // imm12[11:5]=reg_word imm12[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
-                let dm = (imm as u64) & 0x1f;
-                let reg_word = ((imm as u64) >> 5) & 0x1f;
-                let addr_off = LLVMConstInt(LLVMInt32Type(), (dm << 8) | (reg_word << 3), 0);
-                let addr = LLVMBuildAdd(
-                    self.builder,
-                    LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
-                    addr_off,
-                    NONAME,
-                );
-                self.write_mem(addr, rs1, 2);
-            }
-            _ => bail!("Unsupported opcode {}", data.op),
-        };
-        Ok(())
-    }
+    //     // Perform the operation.
+    //     // suppress compiler warning that detects the bail! statement as unrechable
+    //     // Scfgwi is currently the OpcodeImm12Rs1 but this might change
+    //     #[allow(unreachable_patterns)]
+    //     match data.op {
+    //         riscv::OpcodeImm12Rs1::Scfgwi => {
+    //             // ssr write immediate holds address offset in imm12, content in rs1
+    //             // imm12[11:5]=reg_word imm12[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
+    //             let dm = (imm as u64) & 0x1f;
+    //             let reg_word = ((imm as u64) >> 5) & 0x1f;
+    //             let addr_off = LLVMConstInt(LLVMInt32Type(), (dm << 8) | (reg_word << 3), 0);
+    //             let addr = LLVMBuildAdd(
+    //                 self.builder,
+    //                 LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
+    //                 addr_off,
+    //                 NONAME,
+    //             );
+    //             self.write_mem(addr, rs1, 2);
+    //         }
+    //         _ => bail!("Unsupported opcode {}", data.op),
+    //     };
+    //     Ok(())
+    // }
 
     unsafe fn emit_imm12hi_imm12lo_rs1_rs2(
         &self,
@@ -1626,67 +1663,807 @@ impl<'a> InstructionTranslator<'a> {
                     2,
                 );
             }
-            _ => bail!("Unsupported opcode {}", data.op),
-        };
-        Ok(())
-    }
-
-    unsafe fn emit_imm5_rd(&self, data: riscv::FormatImm5Rd) -> Result<()> {
-        let imm = data.imm5;
-        trace!("{} x{} = 0x{:x}", data.op, data.rd, imm);
-        let imm = LLVMConstInt(LLVMInt32Type(), (imm as i64) as u64, 0);
-        let name = format!("{}\0", data.op);
-        let _name = name.as_ptr() as *const _;
-
-        let value = match data.op {
-            riscv::OpcodeImm5Rd::Dmstati => self
-                .section
-                .emit_call("banshee_dma_stat", [self.dma_ptr(), imm]),
-        };
-        self.write_reg(data.rd, value);
-        Ok(())
-    }
-
-    unsafe fn emit_imm12_rd(&self, data: riscv::FormatImm12Rd) -> Result<()> {
-        let imm = data.imm();
-        trace!("{} x{} = 0x{:x}", data.op, data.rd, imm);
-        let name = format!("{}\0", data.op);
-        let _name = name.as_ptr() as *const _;
-
-        let ssr_start = LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0);
-
-        // suppress compiler warning that detects the bail! statement as unrechable
-        // Scfgri is currently the OpcodeImm12Rd but this might change
-        #[allow(unreachable_patterns)]
-        match data.op {
-            riscv::OpcodeImm12Rd::Scfgri => {
-                // srr load immediate from offset in imm12
-                // reorder imm12 to form address
-                // imm12[11:5]=reg_word imm12[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
-                let dm = (imm as u64) & 0x1f;
-                let reg_word = ((imm as u64) >> 5) & 0x1f;
-                let addr_off = LLVMConstInt(LLVMInt32Type(), (dm << 8) | (reg_word << 3), 0);
-                let value = self.emit_load(ssr_start, addr_off, 2, true);
-                self.write_reg(data.rd, value);
+            // Xpulppostmod
+            riscv::OpcodeImm12hiImm12loRs1Rs2::PSbIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Irpost,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12hiImm12loRs1Rs2::PShIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Irpost,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12hiImm12loRs1Rs2::PSwIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Irpost,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rs2,
+                );
+                return Ok(());
             }
             _ => bail!("Unsupported opcode {}", data.op),
         };
         Ok(())
     }
 
+    // unsafe fn emit_imm5_rd(&self, data: riscv::FormatImm5Rd) -> Result<()> {
+    //     let imm = data.imm5;
+    //     trace!("{} x{} = 0x{:x}", data.op, data.rd, imm);
+    //     let imm = LLVMConstInt(LLVMInt32Type(), (imm as i64) as u64, 0);
+    //     let name = format!("{}\0", data.op);
+    //     let _name = name.as_ptr() as *const _;
+
+    //     let value = match data.op {
+    //         riscv::OpcodeImm5Rd::Dmstati => self
+    //             .section
+    //             .emit_call("banshee_dma_stat", [self.dma_ptr(), imm]),
+    //     };
+    //     self.write_reg(data.rd, value);
+    //     Ok(())
+    // }
+
+    // unsafe fn emit_imm12_rd(&self, data: riscv::FormatImm12Rd) -> Result<()> {
+    //     let imm = data.imm();
+    //     trace!("{} x{} = 0x{:x}", data.op, data.rd, imm);
+    //     let name = format!("{}\0", data.op);
+    //     let _name = name.as_ptr() as *const _;
+
+    //     let ssr_start = LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0);
+
+    //     // suppress compiler warning that detects the bail! statement as unrechable
+    //     // Scfgri is currently the OpcodeImm12Rd but this might change
+    //     #[allow(unreachable_patterns)]
+    //     match data.op {
+    //         riscv::OpcodeImm12Rd::Scfgri => {
+    //             // srr load immediate from offset in imm12
+    //             // reorder imm12 to form address
+    //             // imm12[11:5]=reg_word imm12[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
+    //             let dm = (imm as u64) & 0x1f;
+    //             let reg_word = ((imm as u64) >> 5) & 0x1f;
+    //             let addr_off = LLVMConstInt(LLVMInt32Type(), (dm << 8) | (reg_word << 3), 0);
+    //             let value = self.emit_load(ssr_start, addr_off, data.rd, 2, true);
+    //             self.write_reg(data.rd, value);
+    //         }
+    //         _ => bail!("Unsupported opcode {}", data.op),
+    //     };
+    //     Ok(())
+    // }
+
     unsafe fn emit_imm5_rd_rs1(&self, data: riscv::FormatImm5RdRs1) -> Result<()> {
         let imm = data.imm5;
         let rs1 = self.read_reg(data.rs1);
         let imm = LLVMConstInt(LLVMInt32Type(), (imm as i64) as u64, 0);
         let value = match data.op {
-            riscv::OpcodeImm5RdRs1::Dmcpyi => self.section.emit_call(
-                "banshee_dma_strt",
-                [self.dma_ptr(), self.section.state_ptr, rs1, imm],
-            ),
-            // _ => bail!("Unsupported opcode {}", data.op),
+            // riscv::OpcodeImm5RdRs1::Dmcpyi => self.section.emit_call(
+            //     "banshee_dma_strt",
+            //     [self.dma_ptr(), self.section.state_ptr, rs1, imm],
+            // ),
+            // xpulpclip
+            riscv::OpcodeImm5RdRs1::PClip => {
+                // if rs1 <= -2^(Is2-1), rD = -2^(Is2-1),
+                // else if rs1 >= 2^(Is2-1)–1, rD = 2^(Is2-1)-1,
+                // else rD = rs1
+                // Note: If ls2 is equal to 0, -2^(Is2-1)= -1 while (2^(Is2-1)-1)=0;
+
+                let one = LLVMConstInt(LLVMInt32Type(), 1, 0);
+                let zero = LLVMConstNull(LLVMInt32Type());
+
+                // check imm == 0
+                let sel0 = LLVMBuildICmp(self.builder, LLVMIntEQ, imm, zero, NONAME);
+
+                let pow = LLVMBuildShl(
+                    self.builder,
+                    one,
+                    LLVMBuildSub(self.builder, imm, one, NONAME),
+                    NONAME,
+                );
+                // conditions
+                let fst = LLVMBuildSelect(
+                    self.builder,
+                    sel0,
+                    LLVMConstSub(zero, one),
+                    LLVMBuildSub(self.builder, zero, pow, NONAME),
+                    NONAME,
+                );
+                let snd = LLVMBuildSelect(
+                    self.builder,
+                    sel0,
+                    zero,
+                    LLVMBuildSub(self.builder, pow, one, NONAME),
+                    NONAME,
+                );
+                let sel1 = LLVMBuildICmp(self.builder, LLVMIntSLE, rs1, fst, NONAME);
+                let sel2 = LLVMBuildICmp(self.builder, LLVMIntSGE, rs1, snd, NONAME);
+
+                LLVMBuildSelect(
+                    self.builder,
+                    sel1,
+                    fst,
+                    LLVMBuildSelect(self.builder, sel2, snd, rs1, NONAME),
+                    NONAME,
+                )
+            }
+            riscv::OpcodeImm5RdRs1::PClipu => {
+                // if rs1 <= 0, rD = 0,
+                // else if rs1 >= 2^(Is2–1)-1, rD = 2^(Is2-1)-1,
+                // else rD = rs1
+                // Note: If ls2 is equal to 0, (2^(Is2-1)-1)=0;
+
+                let one = LLVMConstInt(LLVMInt32Type(), 1, 0);
+                let zero = LLVMConstNull(LLVMInt32Type());
+
+                // check imm == 0
+                let sel0 = LLVMBuildICmp(self.builder, LLVMIntEQ, imm, zero, NONAME);
+
+                let pow = LLVMBuildShl(
+                    self.builder,
+                    one,
+                    LLVMBuildSub(self.builder, imm, one, NONAME),
+                    NONAME,
+                );
+                // conditions
+                let snd = LLVMBuildSelect(
+                    self.builder,
+                    sel0,
+                    zero,
+                    LLVMBuildSub(self.builder, pow, one, NONAME),
+                    NONAME,
+                );
+                let sel1 = LLVMBuildICmp(self.builder, LLVMIntSLE, rs1, zero, NONAME);
+                let sel2 = LLVMBuildICmp(self.builder, LLVMIntSGE, rs1, snd, NONAME);
+
+                LLVMBuildSelect(
+                    self.builder,
+                    sel1,
+                    zero,
+                    LLVMBuildSelect(self.builder, sel2, snd, rs1, NONAME),
+                    NONAME,
+                )
+            } // _ => bail!("Unsupported opcode {}", data.op),
         };
         self.write_reg(data.rd, value);
         Ok(())
+    }
+
+    unsafe fn emit_imm6_rd_rs1(&self, data: riscv::FormatImm6RdRs1) -> Result<()> {
+        // To get correctly arranged bits, use the imm() function
+        let imm = data.imm();
+        let rs1 = self.read_reg(data.rs1);
+        let rd = self.read_reg(data.rd);
+
+        let imm = LLVMConstInt(LLVMIntType(6), imm as u64, 0);
+        let imm6s_8 = LLVMBuildSExt(self.builder, imm, LLVMInt8Type(), NONAME);
+        let imm6s_16 = LLVMBuildSExt(self.builder, imm, LLVMInt16Type(), NONAME);
+        let imm6s_32 = LLVMBuildSExt(self.builder, imm, LLVMInt32Type(), NONAME);
+        let imm6z_8 = LLVMBuildZExt(self.builder, imm, LLVMInt8Type(), NONAME);
+        let imm6z_16 = LLVMBuildZExt(self.builder, imm, LLVMInt16Type(), NONAME);
+        let imm6z_32 = LLVMBuildZExt(self.builder, imm, LLVMInt32Type(), NONAME);
+
+        let value = match data.op {
+            riscv::OpcodeImm6RdRs1::PvAddSciH => {
+                // rD[i] = (rs1[i] + Sext(Imm6)) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvAddSciB => {
+                // rD[i] = (rs1[i] + Sext(Imm6)) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvSubSciH => {
+                // rD[i] = (rs1[i] - Sext(Imm6)) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvSubSciB => {
+                // rD[i] = (rs1[i] - Sext(Imm6)) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvAvgSciH => {
+                // rD[i] = ((rs1[i] + Sext(Imm6)) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvAvgSciB => {
+                // rD[i] = ((rs1[i] + Sext(Imm6)) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvAvguSciH => {
+                // rD[i] = ((rs1[i] + Sext(Imm6)) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvAvguSciB => {
+                // rD[i] = ((rs1[i] + Sext(Imm6)) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMinSciH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMinSciB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMaxSciH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6s_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMaxSciB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6s_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMinuSciH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6z_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMinuSciB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6z_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMaxuSciH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // omparison is unsigned
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    imm6z_16,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvMaxuSciB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    imm6z_8,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvSrlSciH => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6z_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSrlSciB => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6z_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSraSciH => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6z_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSraSciB => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6z_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSllSciH => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6z_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSllSciB => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6z_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvOrSciH => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6s_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvOrSciB => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6s_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvXorSciH => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6s_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvXorSciB => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6s_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvAndSciH => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                imm6s_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvAndSciB => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                imm6s_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvExtractH => {
+                // rD = Sext(rs1[((I+1)*16)-1 : I*16])
+
+                let src_sel = self.select_bit(imm6s_32, 0);
+
+                // calculate top and bottom of rs1
+                let rs1b = self.cast_select_bits(rs1, 0, 16);
+                let rs1t = self.cast_select_bits(rs1, 16, 16);
+
+                // select correct half
+                let sel = LLVMBuildSelect(self.builder, src_sel, rs1t, rs1b, NONAME);
+
+                LLVMBuildSExt(self.builder, sel, LLVMInt32Type(), NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvExtractB => {
+                // rD = Sext(rs1[((I+1)*16)-1 : I*16])
+
+                let src_sel0 = self.select_bit(imm6s_32, 0);
+                let src_sel1 = self.select_bit(imm6s_32, 1);
+
+                // calculate 4 bytes of rs1
+                let rs1_p0 = self.cast_select_bits(rs1, 0, 8);
+                let rs1_p1 = self.cast_select_bits(rs1, 8, 8);
+                let rs1_p2 = self.cast_select_bits(rs1, 16, 8);
+                let rs1_p3 = self.cast_select_bits(rs1, 24, 8);
+
+                // select correct half
+                let sel = LLVMBuildSelect(
+                    self.builder,
+                    src_sel1,
+                    LLVMBuildSelect(self.builder, src_sel0, rs1_p3, rs1_p2, NONAME),
+                    LLVMBuildSelect(self.builder, src_sel0, rs1_p1, rs1_p0, NONAME),
+                    NONAME,
+                );
+
+                LLVMBuildSExt(self.builder, sel, LLVMInt32Type(), NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvExtractuH => {
+                // rD = Zext(rs1[((I+1)*16)-1 : I*16])
+
+                let src_sel = self.select_bit(imm6z_32, 0);
+
+                // calculate top and bottom of rs1
+                let rs1b = self.cast_select_bits(rs1, 0, 16);
+                let rs1t = self.cast_select_bits(rs1, 16, 16);
+
+                // select correct half
+                let sel = LLVMBuildSelect(self.builder, src_sel, rs1t, rs1b, NONAME);
+
+                LLVMBuildZExt(self.builder, sel, LLVMInt32Type(), NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvExtractuB => {
+                // rD = Zext(rs1[((I+1)*16)-1 : I*16])
+
+                let src_sel0 = self.select_bit(imm6z_32, 0);
+                let src_sel1 = self.select_bit(imm6z_32, 1);
+
+                // calculate 4 bytes of rs1
+                let rs1_p0 = self.cast_select_bits(rs1, 0, 8);
+                let rs1_p1 = self.cast_select_bits(rs1, 8, 8);
+                let rs1_p2 = self.cast_select_bits(rs1, 16, 8);
+                let rs1_p3 = self.cast_select_bits(rs1, 24, 8);
+
+                // select correct half
+                let sel = LLVMBuildSelect(
+                    self.builder,
+                    src_sel1,
+                    LLVMBuildSelect(self.builder, src_sel0, rs1_p3, rs1_p2, NONAME),
+                    LLVMBuildSelect(self.builder, src_sel0, rs1_p1, rs1_p0, NONAME),
+                    NONAME,
+                );
+
+                LLVMBuildZExt(self.builder, sel, LLVMInt32Type(), NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvInsertH => {
+                // rD[((I+1)*16-1:I*16] = rs1[15:0]
+                // Note: The rest of the bits of rD are untouched and keep their previous value
+
+                let src_sel = self.select_bit(imm6s_32, 0);
+
+                // get value to insert
+                let rs1b = self.select_bits(rs1, 0, 16, false);
+                let rs1t = LLVMBuildShl(
+                    self.builder,
+                    rs1b,
+                    LLVMConstInt(LLVMInt32Type(), 16, 1),
+                    NONAME,
+                );
+
+                // get top and bottom half of rD
+                let rdb = self.select_bits(rd, 0, 16, true);
+                let rdt = self.select_bits(rd, 16, 16, true);
+
+                // create combinations
+                let comb0 = LLVMBuildOr(self.builder, rs1b, rdt, NONAME);
+                let comb1 = LLVMBuildOr(self.builder, rs1t, rdb, NONAME);
+
+                // select correct combination
+                LLVMBuildSelect(self.builder, src_sel, comb1, comb0, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvInsertB => {
+                // rD[((I+1)*8-1:I*8] = rs1[7:0]
+                // Note: The rest of the bits of rD are untouched and keep their previous value
+
+                let src_sel0 = self.select_bit(imm6z_32, 0);
+                let src_sel1 = self.select_bit(imm6z_32, 1);
+
+                // get value to insert
+                let rs1_p0 = self.select_bits(rs1, 0, 8, false);
+                let rs1_p1 = LLVMBuildShl(
+                    self.builder,
+                    rs1_p0,
+                    LLVMConstInt(LLVMInt32Type(), 8, 1),
+                    NONAME,
+                );
+                let rs1_p2 = LLVMBuildShl(
+                    self.builder,
+                    rs1_p0,
+                    LLVMConstInt(LLVMInt32Type(), 16, 1),
+                    NONAME,
+                );
+                let rs1_p3 = LLVMBuildShl(
+                    self.builder,
+                    rs1_p0,
+                    LLVMConstInt(LLVMInt32Type(), 24, 1),
+                    NONAME,
+                );
+
+                // mask out goal position
+                let m_p0 = self.build_mask(0, 8, true);
+                let m_p1 = self.build_mask(8, 8, true);
+                let m_p2 = self.build_mask(16, 8, true);
+                let m_p3 = self.build_mask(24, 8, true);
+
+                let rd_p0 = LLVMBuildAnd(self.builder, rd, m_p0, NONAME);
+                let rd_p1 = LLVMBuildAnd(self.builder, rd, m_p1, NONAME);
+                let rd_p2 = LLVMBuildAnd(self.builder, rd, m_p2, NONAME);
+                let rd_p3 = LLVMBuildAnd(self.builder, rd, m_p3, NONAME);
+
+                // build possible combinations
+                let comb_p0 = LLVMBuildOr(self.builder, rd_p0, rs1_p0, NONAME);
+                let comb_p1 = LLVMBuildOr(self.builder, rd_p1, rs1_p1, NONAME);
+                let comb_p2 = LLVMBuildOr(self.builder, rd_p2, rs1_p2, NONAME);
+                let comb_p3 = LLVMBuildOr(self.builder, rd_p3, rs1_p3, NONAME);
+
+                // select correct combination
+                LLVMBuildSelect(
+                    self.builder,
+                    src_sel1,
+                    LLVMBuildSelect(self.builder, src_sel0, comb_p3, comb_p2, NONAME),
+                    LLVMBuildSelect(self.builder, src_sel0, comb_p1, comb_p0, NONAME),
+                    NONAME,
+                )
+            }
+            riscv::OpcodeImm6RdRs1::PvDotupSciH => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                imm6z_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvDotupSciB => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                imm6z_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvDotuspSciH => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                imm6s_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvDotuspSciB => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                imm6s_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvDotspSciH => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Sci,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                imm6s_16,
+            ),
+            riscv::OpcodeImm6RdRs1::PvDotspSciB => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Sci,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                imm6s_8,
+            ),
+            riscv::OpcodeImm6RdRs1::PvSdotupSciH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    imm6z_16,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvSdotupSciB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    imm6z_8,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvSdotuspSciH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    imm6s_16,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvSdotuspSciB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    imm6s_8,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvSdotspSciH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Sci,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    imm6s_16,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeImm6RdRs1::PvSdotspSciB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Sci,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    imm6s_8,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            _ => bail!("Unsupported opcode {}", data.op),
+        };
+        self.write_reg(data.rd, value);
+        Ok(())
+    }
+
+    /// Builds mask of `n` bits starting at bit `b`.
+    ///
+    /// If `inverse` is `true` the bits will flipped to get an inverse mask.
+    unsafe fn build_mask(&self, b: u64, n: u32, inverse: bool) -> LLVMValueRef {
+        // for n bit mask need number 2^n-1, then shifted to correct position with b
+        let m = (2u64.pow(n) - 1) << b;
+        let mut mask = LLVMConstInt(LLVMInt32Type(), m, 1);
+
+        if inverse {
+            let all_one = LLVMConstInt(LLVMInt32Type(), u64::MAX, 0);
+            mask = LLVMBuildXor(self.builder, mask, all_one, NONAME);
+        }
+
+        mask
     }
 
     unsafe fn emit_imm12_rd_rs1(&self, data: riscv::FormatImm12RdRs1) -> Result<()> {
@@ -1709,6 +2486,7 @@ impl<'a> InstructionTranslator<'a> {
         let imm = LLVMConstInt(LLVMInt32Type(), (imm as i64) as u64, 0);
         let name = format!("{}\0", data.op);
         let name = name.as_ptr() as *const _;
+
         let value = match data.op {
             riscv::OpcodeImm12RdRs1::Addi => LLVMBuildAdd(self.builder, rs1, imm, name),
             riscv::OpcodeImm12RdRs1::Slti => LLVMBuildZExt(
@@ -1726,11 +2504,11 @@ impl<'a> InstructionTranslator<'a> {
             riscv::OpcodeImm12RdRs1::Andi => LLVMBuildAnd(self.builder, rs1, imm, name),
             riscv::OpcodeImm12RdRs1::Ori => LLVMBuildOr(self.builder, rs1, imm, name),
             riscv::OpcodeImm12RdRs1::Xori => LLVMBuildXor(self.builder, rs1, imm, name),
-            riscv::OpcodeImm12RdRs1::Lb => self.emit_load(rs1, imm, 0, true),
-            riscv::OpcodeImm12RdRs1::Lh => self.emit_load(rs1, imm, 1, true),
-            riscv::OpcodeImm12RdRs1::Lw => self.emit_load(rs1, imm, 2, true),
-            riscv::OpcodeImm12RdRs1::Lbu => self.emit_load(rs1, imm, 0, false),
-            riscv::OpcodeImm12RdRs1::Lhu => self.emit_load(rs1, imm, 1, false),
+            riscv::OpcodeImm12RdRs1::Lb => self.emit_load(rs1, imm, data.rd, 0, true),
+            riscv::OpcodeImm12RdRs1::Lh => self.emit_load(rs1, imm, data.rd, 1, true),
+            riscv::OpcodeImm12RdRs1::Lw => self.emit_load(rs1, imm, data.rd, 2, true),
+            riscv::OpcodeImm12RdRs1::Lbu => self.emit_load(rs1, imm, data.rd, 0, false),
+            riscv::OpcodeImm12RdRs1::Lhu => self.emit_load(rs1, imm, data.rd, 1, false),
             riscv::OpcodeImm12RdRs1::FenceI => return Ok(()), /* NOP */
             riscv::OpcodeImm12RdRs1::Csrrw
             | riscv::OpcodeImm12RdRs1::Csrrs
@@ -1762,7 +2540,7 @@ impl<'a> InstructionTranslator<'a> {
             }
             riscv::OpcodeImm12RdRs1::Flb => {
                 self.was_freppable.set(true);
-                let raw = self.emit_load(rs1, imm, 1, false);
+                let raw = self.emit_load(rs1, imm, data.rd, 1, false);
                 let raw = LLVMBuildZExt(self.builder, raw, LLVMInt64Type(), NONAME);
                 let pad = LLVMConstInt(LLVMInt64Type(), (-1i64 as u64) << 8, 0);
                 let value = LLVMBuildOr(self.builder, raw, pad, NONAME);
@@ -1771,7 +2549,7 @@ impl<'a> InstructionTranslator<'a> {
             }
             riscv::OpcodeImm12RdRs1::Flh => {
                 self.was_freppable.set(true);
-                let raw = self.emit_load(rs1, imm, 1, false);
+                let raw = self.emit_load(rs1, imm, data.rd, 1, false);
                 let raw = LLVMBuildZExt(self.builder, raw, LLVMInt64Type(), NONAME);
                 let pad = LLVMConstInt(LLVMInt64Type(), (-1i64 as u64) << 16, 0);
                 let value = LLVMBuildOr(self.builder, raw, pad, NONAME);
@@ -1780,7 +2558,7 @@ impl<'a> InstructionTranslator<'a> {
             }
             riscv::OpcodeImm12RdRs1::Flw => {
                 self.was_freppable.set(true);
-                let raw = self.emit_load(rs1, imm, 2, false);
+                let raw = self.emit_load(rs1, imm, data.rd, 2, false);
                 let value = LLVMBuildBitCast(self.builder, raw, LLVMFloatType(), NONAME);
                 self.write_freg_f32(data.rd, value);
                 return Ok(());
@@ -1790,14 +2568,177 @@ impl<'a> InstructionTranslator<'a> {
                 self.emit_fld(data.rd, LLVMBuildAdd(self.builder, rs1, imm, NONAME));
                 return Ok(());
             }
+            // Xpulppostmod
+            riscv::OpcodeImm12RdRs1::PLbIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Irpost,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12RdRs1::PLbuIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Irpost,
+                    PostmodSize::B,
+                    false,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12RdRs1::PLhIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Irpost,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12RdRs1::PLhuIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Irpost,
+                    PostmodSize::H,
+                    false,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeImm12RdRs1::PLwIrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Irpost,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    imm,
+                    data.rd,
+                );
+                return Ok(());
+            }
             _ => bail!("Unsupported opcode {}", data.op),
         };
         self.write_reg(data.rd, value);
         Ok(())
     }
 
+    /// Emit the correct LLVM code for the _xpulppostmod_ extension.
+    ///
+    /// All _postmod_ instructions depend on four attributes: instruction `type`, `mode`,
+    /// `size` and if they are sign extended (`sext`).
+    ///
+    /// There are 3 operands which are used differently depending on instruction `type` and
+    /// `mode`:
+    ///
+    /// |         | L        | S        |
+    /// | ------- | -------- | -------- |
+    /// | **op1** | rs1      | rs1      |
+    /// | **op2** | rs2, imm | rs3, imm |
+    /// | **op3** | rd       | rs2      |
+    ///
+    unsafe fn emit_postmod(
+        &self,
+        insn: PostmodInsn,
+        mode: PostmodMode,
+        size: PostmodSize,
+        sext: bool,
+        op1: u32, //L: rs1,        S: rs1
+        op1_ref: LLVMValueRef,
+        op2_ref: LLVMValueRef, //L: rs2, imm,   S: rs3, imm
+        op3: u32,              //L: rd,         S: rs2
+    ) {
+        let offset = match size {
+            PostmodSize::W => 2,
+            PostmodSize::H => 1,
+            PostmodSize::B => 0,
+        };
+
+        let rr = LLVMBuildAdd(self.builder, op1_ref, op2_ref, NONAME);
+
+        // Increment rs1
+        match mode {
+            PostmodMode::Irpost => {
+                // Increment rs1
+                let inc = LLVMBuildSExt(self.builder, op2_ref, LLVMInt32Type(), NONAME);
+
+                let add = LLVMBuildAdd(self.builder, op1_ref, inc, NONAME);
+                self.write_reg(op1, add);
+            }
+            PostmodMode::Rrpost => {
+                // Increment rs1
+                let add = LLVMBuildAdd(self.builder, op1_ref, op2_ref, NONAME);
+                self.write_reg(op1, add);
+            }
+            PostmodMode::Rr => {}
+        }
+
+        match insn {
+            PostmodInsn::L => {
+                let mem = self.emit_postmod_load(mode, sext, op1_ref, op3, offset, rr);
+
+                self.write_reg(op3, mem)
+            }
+            PostmodInsn::S => {
+                // Determine address
+                let addr = match mode {
+                    PostmodMode::Irpost => op1_ref,
+                    PostmodMode::Rrpost => op1_ref,
+                    PostmodMode::Rr => rr,
+                };
+                let op3_ref = self.read_reg(op3);
+                self.write_mem(addr, op3_ref, offset)
+            }
+        }
+    }
+
+    unsafe fn emit_postmod_load(
+        &self,
+        mode: PostmodMode,
+        sext: bool,
+        op1_ref: LLVMValueRef,
+        rd: u32,
+        offset: usize,
+        rr: LLVMValueRef,
+    ) -> LLVMValueRef {
+        let c0_32 = LLVMConstInt(LLVMInt32Type(), 0, 1);
+
+        // Load from memory
+        match mode {
+            PostmodMode::Irpost => {
+                // Load from memory
+                self.emit_load(op1_ref, c0_32, rd, offset, sext)
+            }
+            PostmodMode::Rrpost => {
+                // Load from memory
+                self.emit_load(op1_ref, c0_32, rd, offset, sext)
+            }
+            PostmodMode::Rr => {
+                // Load from memory
+                self.emit_load(rr, c0_32, rd, offset, sext)
+            }
+        }
+    }
+
     unsafe fn emit_fld(&self, rd: u32, addr: LLVMValueRef) {
-        let raw_lo = self.read_mem(addr, 2, false);
+        let raw_lo = self.read_mem(addr, rd, 2, false);
         let raw_hi = self.read_mem(
             LLVMBuildAdd(
                 self.builder,
@@ -1805,6 +2746,7 @@ impl<'a> InstructionTranslator<'a> {
                 LLVMConstInt(LLVMInt32Type(), 4, 0),
                 NONAME,
             ),
+            rd,
             2,
             false,
         );
@@ -1874,6 +2816,93 @@ impl<'a> InstructionTranslator<'a> {
                 Ok(())
             }
         }
+    }
+
+    unsafe fn emit_prs3_rs1_rs2(&self, data: riscv::FormatPrs3Rs1Rs2) -> Result<()> {
+        let rs1 = self.read_reg(data.rs1);
+        let rs3 = self.read_reg(data.prs3);
+
+        match data.op {
+            // Xpulppostmod
+            riscv::OpcodePrs3Rs1Rs2::PSbRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rrpost,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodePrs3Rs1Rs2::PShRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rrpost,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodePrs3Rs1Rs2::PSwRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rrpost,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodePrs3Rs1Rs2::PSbRr => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rr,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodePrs3Rs1Rs2::PShRr => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rr,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+            riscv::OpcodePrs3Rs1Rs2::PSwRr => {
+                self.emit_postmod(
+                    PostmodInsn::S,
+                    PostmodMode::Rr,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs3,
+                    data.rs2,
+                );
+                return Ok(());
+            }
+        };
     }
 
     unsafe fn emit_rd_rm_rs1(&self, data: riscv::FormatRdRmRs1) -> Result<()> {
@@ -2115,56 +3144,57 @@ impl<'a> InstructionTranslator<'a> {
         Ok(())
     }
 
-    unsafe fn emit_rd_rs2(&self, data: riscv::FormatRdRs2) -> Result<()> {
-        trace!("{} x{}, f{}", data.op, data.rd, data.rs2);
-        let rs2 = self.read_reg(data.rs2);
+    // unsafe fn emit_rd_rs2(&self, data: riscv::FormatRdRs2) -> Result<()> {
+    //     trace!("{} x{}, f{}", data.op, data.rd, data.rs2);
+    //     let rs2 = self.read_reg(data.rs2);
 
-        let value = match data.op {
-            riscv::OpcodeRdRs2::Scfgr => {
-                // reorder rs2 to form address
-                // rs2[11:5]=reg_word rs2[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
-                let reg = LLVMBuildLShr(
-                    self.builder,
-                    rs2,
-                    LLVMConstInt(LLVMInt32Type(), 2 as u64, 0),
-                    NONAME,
-                );
-                let reg_masked = LLVMBuildAnd(
-                    self.builder,
-                    reg,
-                    LLVMConstInt(LLVMInt32Type(), 0xf8 as u64, 0),
-                    NONAME,
-                );
-                let rs2_dm = LLVMBuildAnd(
-                    self.builder,
-                    rs2,
-                    LLVMConstInt(LLVMInt32Type(), 0x1f as u64, 0),
-                    NONAME,
-                );
-                let rs2_dm_shifted = LLVMBuildShl(
-                    self.builder,
-                    rs2_dm,
-                    LLVMConstInt(LLVMInt32Type(), 8 as u64, 0),
-                    NONAME,
-                );
-                let addr_off = LLVMBuildOr(self.builder, rs2_dm_shifted, reg_masked, NONAME);
-                // perform load
-                self.emit_load(
-                    LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
-                    addr_off,
-                    2,
-                    true,
-                )
-            }
-            riscv::OpcodeRdRs2::Dmstat => self
-                .section
-                .emit_call("banshee_dma_stat", [self.dma_ptr(), rs2]),
-            // _ => bail!("Unsupported opcode {}", data.op),
-        };
+    //     let value = match data.op {
+    //         riscv::OpcodeRdRs2::Scfgr => {
+    //             // reorder rs2 to form address
+    //             // rs2[11:5]=reg_word rs2[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
+    //             let reg = LLVMBuildLShr(
+    //                 self.builder,
+    //                 rs2,
+    //                 LLVMConstInt(LLVMInt32Type(), 2 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let reg_masked = LLVMBuildAnd(
+    //                 self.builder,
+    //                 reg,
+    //                 LLVMConstInt(LLVMInt32Type(), 0xf8 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let rs2_dm = LLVMBuildAnd(
+    //                 self.builder,
+    //                 rs2,
+    //                 LLVMConstInt(LLVMInt32Type(), 0x1f as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let rs2_dm_shifted = LLVMBuildShl(
+    //                 self.builder,
+    //                 rs2_dm,
+    //                 LLVMConstInt(LLVMInt32Type(), 8 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let addr_off = LLVMBuildOr(self.builder, rs2_dm_shifted, reg_masked, NONAME);
+    //             // perform load
+    //             self.emit_load(
+    //                 LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
+    //                 addr_off,
+    //                 data.rd,
+    //                 2,
+    //                 true,
+    //             )
+    //         }
+    //         riscv::OpcodeRdRs2::Dmstat => self
+    //             .section
+    //             .emit_call("banshee_dma_stat", [self.dma_ptr(), rs2]),
+    //         // _ => bail!("Unsupported opcode {}", data.op),
+    //     };
 
-        self.write_reg(data.rd, value);
-        Ok(())
-    }
+    //     self.write_reg(data.rd, value);
+    //     Ok(())
+    // }
 
     unsafe fn emit_rd_rm_rs1_rs2(&self, data: riscv::FormatRdRmRs1Rs2) -> Result<()> {
         self.was_freppable.set(true);
@@ -2467,50 +3497,50 @@ impl<'a> InstructionTranslator<'a> {
         Ok(())
     }
 
-    unsafe fn emit_imm12_rs1_staggermask_staggermax(
-        &self,
-        data: riscv::FormatImm12Rs1StaggerMaskStaggerMax,
-        fseq: &mut SequencerContext,
-    ) -> Result<()> {
-        trace!(
-            "{} x{}, {}, 0b{:b}, {}",
-            data.op,
-            data.rs1,          // register containing max repetition
-            data.imm12,        // max instruction
-            data.stagger_mask, // stagger mask
-            data.stagger_max   // stagger max
-        );
-        // Initialize repetition iterator to 0
-        LLVMBuildStore(
-            self.builder,
-            LLVMConstInt(LLVMInt32Type(), 0, 0),
-            self.section.fseq_iter.rpt_ptr_ref,
-        );
-        // Initialize repetition bound
-        LLVMBuildStore(
-            self.builder,
-            self.read_reg(data.rs1),
-            self.section.fseq_iter.max_rpt_ref,
-        );
-        // suppress compiler warning that detects the bail! statement as unrechable
-        // Frep* are currently the only OpcodeImm12Rs1Stagger_maskStagger_max but this might change
-        #[allow(unreachable_patterns)]
-        match data.op {
-            riscv::OpcodeImm12Rs1StaggerMaskStaggerMax::FrepO => fseq.init_rep(
-                data.imm12 as u8,
-                true,
-                data.stagger_max as u8,
-                data.stagger_mask as u8,
-            ),
-            riscv::OpcodeImm12Rs1StaggerMaskStaggerMax::FrepI => fseq.init_rep(
-                data.imm12 as u8,
-                false,
-                data.stagger_max as u8,
-                data.stagger_mask as u8,
-            ),
-            _ => bail!("Unsupported opcode {}", data.op),
-        }
-    }
+    // unsafe fn emit_imm12_rs1_staggermask_staggermax(
+    //     &self,
+    //     data: riscv::FormatImm12Rs1StaggerMaskStaggerMax,
+    //     fseq: &mut SequencerContext,
+    // ) -> Result<()> {
+    //     trace!(
+    //         "{} x{}, {}, 0b{:b}, {}",
+    //         data.op,
+    //         data.rs1,          // register containing max repetition
+    //         data.imm12,        // max instruction
+    //         data.stagger_mask, // stagger mask
+    //         data.stagger_max   // stagger max
+    //     );
+    //     // Initialize repetition iterator to 0
+    //     LLVMBuildStore(
+    //         self.builder,
+    //         LLVMConstInt(LLVMInt32Type(), 0, 0),
+    //         self.section.fseq_iter.rpt_ptr_ref,
+    //     );
+    //     // Initialize repetition bound
+    //     LLVMBuildStore(
+    //         self.builder,
+    //         self.read_reg(data.rs1),
+    //         self.section.fseq_iter.max_rpt_ref,
+    //     );
+    //     // suppress compiler warning that detects the bail! statement as unrechable
+    //     // Frep* are currently the only OpcodeImm12Rs1Stagger_maskStagger_max but this might change
+    //     #[allow(unreachable_patterns)]
+    //     match data.op {
+    //         riscv::OpcodeImm12Rs1StaggerMaskStaggerMax::FrepO => fseq.init_rep(
+    //             data.imm12 as u8,
+    //             true,
+    //             data.stagger_max as u8,
+    //             data.stagger_mask as u8,
+    //         ),
+    //         riscv::OpcodeImm12Rs1StaggerMaskStaggerMax::FrepI => fseq.init_rep(
+    //             data.imm12 as u8,
+    //             false,
+    //             data.stagger_max as u8,
+    //             data.stagger_mask as u8,
+    //         ),
+    //         _ => bail!("Unsupported opcode {}", data.op),
+    //     }
+    // }
 
     /// get fpmode_src and fpmode_dst bits for fpmode CSR
     unsafe fn read_fpmode(&self) -> (LLVMValueRef, LLVMValueRef) {
@@ -3437,6 +4467,81 @@ impl<'a> InstructionTranslator<'a> {
             }
             _ => (),
         }
+
+        // Handle other operations.
+        let rs1 = self.read_reg(data.rs1);
+        let c0_32 = LLVMConstInt(LLVMInt32Type(), 0, 0);
+
+        let value = match data.op {
+            // xpulpabs
+            riscv::OpcodeRdRs1::PAbs => LLVMBuildSelect(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntSLT, rs1, c0_32, NONAME),
+                LLVMBuildNeg(self.builder, rs1, NONAME),
+                rs1,
+                name,
+            ),
+            // xpulpbitop
+            riscv::OpcodeRdRs1::PExths => {
+                let sel = LLVMBuildIntCast(
+                    self.builder,
+                    self.select_bits(rs1, 0, 16, false),
+                    LLVMInt16Type(),
+                    NONAME,
+                );
+
+                LLVMBuildSExt(self.builder, sel, LLVMInt32Type(), name)
+            }
+            riscv::OpcodeRdRs1::PExthz => {
+                let sel = LLVMBuildIntCast(
+                    self.builder,
+                    self.select_bits(rs1, 0, 16, false),
+                    LLVMInt16Type(),
+                    NONAME,
+                );
+
+                LLVMBuildZExt(self.builder, sel, LLVMInt32Type(), name)
+            }
+            riscv::OpcodeRdRs1::PExtbs => {
+                let sel = LLVMBuildIntCast(
+                    self.builder,
+                    self.select_bits(rs1, 0, 8, false),
+                    LLVMInt8Type(),
+                    NONAME,
+                );
+
+                LLVMBuildSExt(self.builder, sel, LLVMInt32Type(), name)
+            }
+            riscv::OpcodeRdRs1::PExtbz => {
+                let sel = LLVMBuildIntCast(
+                    self.builder,
+                    self.select_bits(rs1, 0, 8, false),
+                    LLVMInt8Type(),
+                    NONAME,
+                );
+
+                LLVMBuildZExt(self.builder, sel, LLVMInt32Type(), name)
+            }
+            riscv::OpcodeRdRs1::PvAbsH => self.simd_alu_op(
+                SIMDInsn::Abs,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                LLVMConstNull(LLVMInt32Type()),
+            ),
+            riscv::OpcodeRdRs1::PvAbsB => self.simd_alu_op(
+                SIMDInsn::Abs,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                LLVMConstNull(LLVMInt32Type()),
+            ),
+            _ => bail!("Unsupported opcode {}", data.op),
+        };
+        self.write_reg(data.rd, value);
+
         Ok(())
     }
 
@@ -5403,6 +6508,11 @@ impl<'a> InstructionTranslator<'a> {
         // Handle other operations.
         let rs1 = self.read_reg(data.rs1);
         let rs2 = self.read_reg(data.rs2);
+        let rd = self.read_reg(data.rd);
+        // Constans for easier shifting
+        let c24 = LLVMConstInt(LLVMInt32Type(), 24, 1);
+        let c16 = LLVMConstInt(LLVMInt32Type(), 16, 1);
+        let c8 = LLVMConstInt(LLVMInt32Type(), 8, 1);
         let value = match data.op {
             riscv::OpcodeRdRs1Rs2::Add => LLVMBuildAdd(self.builder, rs1, rs2, name),
             riscv::OpcodeRdRs1Rs2::Sub => LLVMBuildSub(self.builder, rs1, rs2, name),
@@ -5474,11 +6584,1629 @@ impl<'a> InstructionTranslator<'a> {
             riscv::OpcodeRdRs1Rs2::Sll => LLVMBuildShl(self.builder, rs1, rs2, name),
             riscv::OpcodeRdRs1Rs2::Srl => LLVMBuildLShr(self.builder, rs1, rs2, name),
             riscv::OpcodeRdRs1Rs2::Sra => LLVMBuildAShr(self.builder, rs1, rs2, name),
-            riscv::OpcodeRdRs1Rs2::Dmcpy => self.section.emit_call(
-                "banshee_dma_strt",
-                [self.dma_ptr(), self.section.state_ptr, rs1, rs2],
+            // riscv::OpcodeRdRs1Rs2::Dmcpy => self.section.emit_call(
+            //     "banshee_dma_strt",
+            //     [self.dma_ptr(), self.section.state_ptr, rs1, rs2],
+            // ),
+            // xpulpmacsi
+            riscv::OpcodeRdRs1Rs2::PMac => LLVMBuildAdd(
+                self.builder,
+                rd,
+                LLVMBuildMul(self.builder, rs1, rs2, NONAME),
+                name,
             ),
+            riscv::OpcodeRdRs1Rs2::PMsu => LLVMBuildSub(
+                self.builder,
+                rd,
+                LLVMBuildMul(self.builder, rs1, rs2, NONAME),
+                name,
+            ),
+            // xpulpminmax
+            riscv::OpcodeRdRs1Rs2::PMin => LLVMBuildSelect(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntSLT, rs1, rs2, NONAME),
+                rs1,
+                rs2,
+                name,
+            ),
+            riscv::OpcodeRdRs1Rs2::PMinu => LLVMBuildSelect(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntULT, rs1, rs2, NONAME),
+                rs1,
+                rs2,
+                name,
+            ),
+            riscv::OpcodeRdRs1Rs2::PMax => LLVMBuildSelect(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntSLT, rs1, rs2, NONAME),
+                rs2,
+                rs1,
+                name,
+            ),
+            riscv::OpcodeRdRs1Rs2::PMaxu => LLVMBuildSelect(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntULT, rs1, rs2, NONAME),
+                rs2,
+                rs1,
+                name,
+            ),
+            // xplupslet
+            riscv::OpcodeRdRs1Rs2::PSlet => LLVMBuildZExt(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntSLE, rs1, rs2, NONAME),
+                LLVMInt32Type(),
+                name,
+            ),
+            riscv::OpcodeRdRs1Rs2::PSletu => LLVMBuildZExt(
+                self.builder,
+                LLVMBuildICmp(self.builder, LLVMIntULE, rs1, rs2, NONAME),
+                LLVMInt32Type(),
+                name,
+            ),
+            // xpulpclip
+            riscv::OpcodeRdRs1Rs2::PClipr => {
+                // if rs1 <= -(rs2+1), rD = -(rs2+1),
+                // else if rs1 >=rs2, rD = rs2,
+                // else rD = rs1
+
+                let one = LLVMConstInt(LLVMInt32Type(), 1, 0);
+                let zero = LLVMConstNull(LLVMInt32Type());
+
+                // conditions
+                let fst = LLVMBuildSub(
+                    self.builder,
+                    zero,
+                    LLVMBuildAdd(self.builder, rs2, one, NONAME),
+                    NONAME,
+                );
+                let sel1 = LLVMBuildICmp(self.builder, LLVMIntSLE, rs1, fst, NONAME);
+                let sel2 = LLVMBuildICmp(self.builder, LLVMIntSGE, rs1, rs2, NONAME);
+
+                LLVMBuildSelect(
+                    self.builder,
+                    sel1,
+                    fst,
+                    LLVMBuildSelect(self.builder, sel2, rs2, rs1, NONAME),
+                    NONAME,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PClipur => {
+                // if rs1 <= 0, rD = 0,
+                // else if rs1 >=rs2, rD = rs2,
+                // else rD = rs1
+
+                let zero = LLVMConstNull(LLVMInt32Type());
+
+                let sel1 = LLVMBuildICmp(self.builder, LLVMIntSLE, rs1, zero, NONAME);
+                let sel2 = LLVMBuildICmp(self.builder, LLVMIntSGE, rs1, rs2, NONAME);
+
+                LLVMBuildSelect(
+                    self.builder,
+                    sel1,
+                    zero,
+                    LLVMBuildSelect(self.builder, sel2, rs2, rs1, NONAME),
+                    NONAME,
+                )
+            }
+            // xpulpvectshufflepack
+            riscv::OpcodeRdRs1Rs2::PvShuffle2H => {
+                // rD[31:16] = ((rs2[17] == 1) ? rs1 : rD)[rs2[16]*16+15:rs2[16]*16]
+                // rD[15:0] = ((rs2[1] == 1) ? rs1 : rD)[rs2[0]*16+15:rs2[0]*16]
+
+                // create top and bottom to fill later
+                let mut bottom = LLVMConstNull(LLVMInt32Type());
+                let mut top = LLVMConstNull(LLVMInt32Type());
+
+                // i defines top half as 1 and bottom half as 0
+                for i in (0..=1).rev() {
+                    // extract 0th and 1st resp. 16th and 17th bit of rs2
+                    let src_sel = self.select_bit(rs2, 1 + i * 16);
+
+                    let half_sel = self.select_bit(rs2, i * 16);
+
+                    // calculate halfword of both options
+                    let rs1h = self.select_half_word(rs1, half_sel);
+                    let rdh = self.select_half_word(rd, half_sel);
+
+                    // select correct source and shift to upper half for top bits
+                    if i == 0 {
+                        bottom = LLVMBuildSelect(self.builder, src_sel, rs1h, rdh, NONAME);
+                    } else {
+                        let sel = LLVMBuildSelect(self.builder, src_sel, rs1h, rdh, NONAME);
+                        top = LLVMBuildShl(self.builder, sel, c16, NONAME);
+                    }
+                }
+
+                // combine both parts
+                LLVMBuildOr(self.builder, top, bottom, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvShuffle2B => {
+                // rD[31:24] = ((rs2[26] == 1) ? rs1 : rD)[rs2[25:24]*8+7:rs2[25:24]*8]
+                // rD[23:16] = ((rs2[18] == 1) ? rs1 : rD)[rs2[17:16]*8+7:rs2[17:16]*8]
+                // rD[15:8] = ((rs2[10] == 1) ? rs1 : rD)[rs2[9:8]*8+7:rs2[9:8]*8]
+                // rD[7:0] = ((rs2[2] == 1) ? rs1 : rD)[rs2[1:0]*8+7:rs2[1:0]*8]
+
+                // create 4 parts to fill later
+                // part3 = rD[31:24], part2 = rD[23:16], part1 = rD[15:8], part0 = rD[7:0]
+                let mut part3 = LLVMConstNull(LLVMInt32Type());
+                let mut part2 = LLVMConstNull(LLVMInt32Type());
+                let mut part1 = LLVMConstNull(LLVMInt32Type());
+                let mut part0 = LLVMConstNull(LLVMInt32Type());
+
+                // handle each part i seperately
+                for i in (0..=3).rev() {
+                    // extract needed bits
+                    let src_sel = self.select_bit(rs2, 2 + i * 8);
+                    let half_sel1 = self.select_bit(rs2, 1 + i * 8);
+                    let half_sel0 = self.select_bit(rs2, i * 8);
+
+                    // calculate byte of both options
+                    let rs1b = self.select_byte(rs1, half_sel0, half_sel1);
+                    let rdb = self.select_byte(rd, half_sel0, half_sel1);
+
+                    // select correct source and shift to correct position i if necessary
+                    if i == 0 {
+                        part0 = LLVMBuildSelect(self.builder, src_sel, rs1b, rdb, NONAME);
+                    } else if i == 1 {
+                        let sel = LLVMBuildSelect(self.builder, src_sel, rs1b, rdb, NONAME);
+                        part1 = LLVMBuildShl(self.builder, sel, c8, NONAME);
+                    } else if i == 2 {
+                        let sel = LLVMBuildSelect(self.builder, src_sel, rs1b, rdb, NONAME);
+                        part2 = LLVMBuildShl(self.builder, sel, c16, NONAME);
+                    } else {
+                        let sel = LLVMBuildSelect(self.builder, src_sel, rs1b, rdb, NONAME);
+                        part3 = LLVMBuildShl(self.builder, sel, c24, NONAME);
+                    }
+                }
+
+                // combine all parts
+                LLVMBuildOr(
+                    self.builder,
+                    LLVMBuildOr(self.builder, part0, part1, NONAME),
+                    LLVMBuildOr(self.builder, part2, part3, NONAME),
+                    NONAME,
+                )
+            }
+            // xpulpvect
+            riscv::OpcodeRdRs1Rs2::PvAddH => {
+                // rD[i] = (rs1[i] + op2[i]) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                // instruction code
+                // let sum = LLVMBuildAdd(self.builder, sel1, sel2, NONAME);
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAddScH => {
+                // rD[i] = (rs1[i] + op2[i]) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAddB => {
+                // rD[i] = (rs1[i] + op2[i]) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAddScB => {
+                // rD[i] = (rs1[i] + op2[i]) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Add,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvSubH => {
+                // rD[i] = (rs1[i] - op2[i]) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvSubScH => {
+                // rD[i] = (rs1[i] - op2[i]) & 0xFFFF
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvSubB => {
+                // rD[i] = (rs1[i] - op2[i]) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvSubScB => {
+                // rD[i] = (rs1[i] - op2[i]) & 0xFFFF
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Sub,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvgH => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvgScH => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvgB => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvgScB => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1 Note: Arithmetic right shift
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Avg,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvguH => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvguScH => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvguB => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvAvguScB => {
+                // rD[i] = ((rs1[i] + op2[i]) & {0xFFFF, 0xFF}) >> 1
+                // i = {31:24, 23:16, 15:8, 7:0} = [part3, part2, part1, part0]
+
+                self.simd_alu_op(
+                    SIMDInsn::Avgu,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinScH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinScB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Min,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxScH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxScB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i]
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Max,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinuH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinuScH => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinuB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMinuScB => {
+                // rD[i] = rs1[i] < op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Minu,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxuH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxuScH => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:16, 15:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxuB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvMaxuScB => {
+                // rD[i] = rs1[i] > op2[i] ? rs1[i] : op2[i] Note: Immediate is zero-extended,
+                // comparison is unsigned
+                // i = {31:24, 23:16, 15:8, 7:0}
+
+                self.simd_alu_op(
+                    SIMDInsn::Maxu,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Or,
+                    rs1,
+                    rs2,
+                )
+            }
+            riscv::OpcodeRdRs1Rs2::PvSrlH => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSrlScH => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSrlB => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSrlScB => self.simd_alu_op(
+                SIMDInsn::Srl,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSraH => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSraScH => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSraB => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSraScB => self.simd_alu_op(
+                SIMDInsn::Sra,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSllH => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSllScH => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSllB => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSllScB => self.simd_alu_op(
+                SIMDInsn::Sll,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvOrH => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvOrScH => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvOrB => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvOrScB => self.simd_alu_op(
+                SIMDInsn::Or,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvXorH => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvXorScH => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvXorB => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvXorScB => self.simd_alu_op(
+                SIMDInsn::Xor,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvAndH => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvAndScH => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvAndB => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvAndScB => self.simd_alu_op(
+                SIMDInsn::And,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Or,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotupH => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotupScH => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotupB => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotupScB => self.simd_alu_op(
+                SIMDInsn::Dotup,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotuspH => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotuspScH => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotuspB => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotuspScB => self.simd_alu_op(
+                SIMDInsn::Dotusp,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotspH => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Normal,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotspScH => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Sc,
+                SIMDSize::H,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotspB => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Normal,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvDotspScB => self.simd_alu_op(
+                SIMDInsn::Dotsp,
+                SIMDMode::Sc,
+                SIMDSize::B,
+                Combination::Add,
+                rs1,
+                rs2,
+            ),
+            riscv::OpcodeRdRs1Rs2::PvSdotupH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotupScH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotupB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotupScB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotup,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotuspH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotuspScH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotuspB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotuspScB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotusp,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotspH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Normal,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotspScH => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Sc,
+                    SIMDSize::H,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotspB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Normal,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            riscv::OpcodeRdRs1Rs2::PvSdotspScB => {
+                let res = self.simd_alu_op(
+                    SIMDInsn::Sdotsp,
+                    SIMDMode::Sc,
+                    SIMDSize::B,
+                    Combination::Add,
+                    rs1,
+                    rs2,
+                );
+
+                LLVMBuildAdd(self.builder, res, rd, NONAME)
+            }
+            // Xpulppostmod
+            riscv::OpcodeRdRs1Rs2::PLbRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rrpost,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLbuRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rrpost,
+                    PostmodSize::B,
+                    false,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLhRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rrpost,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLhuRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rrpost,
+                    PostmodSize::H,
+                    false,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLwRrpost => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rrpost,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLbRr => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rr,
+                    PostmodSize::B,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLbuRr => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rr,
+                    PostmodSize::B,
+                    false,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLhRr => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rr,
+                    PostmodSize::H,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLhuRr => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rr,
+                    PostmodSize::H,
+                    false,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
+            riscv::OpcodeRdRs1Rs2::PLwRr => {
+                self.emit_postmod(
+                    PostmodInsn::L,
+                    PostmodMode::Rr,
+                    PostmodSize::W,
+                    true,
+                    data.rs1,
+                    rs1,
+                    rs2,
+                    data.rd,
+                );
+                return Ok(());
+            }
             _ => bail!("Unsupported opcode {}", data.op),
+        };
+        self.write_reg(data.rd, value);
+        Ok(())
+    }
+
+    /// Emit the correct LLVM code for the _xpulpvect_ extension.
+    ///
+    /// All _postmod_ instructions depend on four attributes: instruction `type`, `mode`,
+    /// `size` and the way they are combined (`comb`).
+    ///
+    /// There are 2 operands. `op1` is always rs1. Depending on the instruction `mode`, `op2`
+    /// can be rs2, and immediate or the constant 0.
+    ///
+    /// This is the outer-most loop and calls `simd_mode()` for the instruction code.
+    unsafe fn simd_alu_op(
+        &self,
+        insn: SIMDInsn,
+        mode: SIMDMode,
+        size: SIMDSize,
+        comb: Combination,
+        op1: LLVMValueRef,
+        op2: LLVMValueRef,
+    ) -> LLVMValueRef {
+        let is_hw = match size {
+            SIMDSize::H => true,
+            SIMDSize::B => false,
+        };
+
+        // Constans for easier shifting
+        let c24 = LLVMConstInt(LLVMInt32Type(), 24, 1);
+        let c16 = LLVMConstInt(LLVMInt32Type(), 16, 1);
+        let c8 = LLVMConstInt(LLVMInt32Type(), 8, 1);
+
+        if is_hw {
+            // create 2 parts to fill later
+            // top = rD[31:16], bottom = rD[15:0]
+            let mut top = LLVMConstNull(LLVMInt32Type());
+            let mut bottom = LLVMConstNull(LLVMInt32Type());
+
+            // handle each part i seperately
+            for i in (0..=1).rev() {
+                let cast = self.simd_mode(is_hw, insn, mode, op1, op2, i as u32);
+
+                if i == 1 {
+                    top = cast;
+                    if let Combination::Or = comb {
+                        top = LLVMBuildShl(self.builder, cast, c16, NONAME);
+                    }
+                } else {
+                    bottom = cast;
+                }
+            }
+
+            // combine
+            match comb {
+                Combination::Or => LLVMBuildOr(self.builder, top, bottom, NONAME),
+                Combination::Add => LLVMBuildAdd(self.builder, top, bottom, NONAME),
+            }
+        } else {
+            // create 4 parts to fill later
+            // part3 = rD[31:24], part2 = rD[23:16], part1 = rD[15:8], part0 = rD[7:0]
+            let mut part3 = LLVMConstNull(LLVMInt32Type());
+            let mut part2 = LLVMConstNull(LLVMInt32Type());
+            let mut part1 = LLVMConstNull(LLVMInt32Type());
+            let mut part0 = LLVMConstNull(LLVMInt32Type());
+
+            // handle each part i seperately
+            for i in (0..=3).rev() {
+                let cast = self.simd_mode(is_hw, insn, mode, op1, op2, i as u32);
+
+                if i == 3 {
+                    part3 = cast;
+                    if let Combination::Or = comb {
+                        part3 = LLVMBuildShl(self.builder, cast, c24, NONAME);
+                    }
+                } else if i == 2 {
+                    part2 = cast;
+                    if let Combination::Or = comb {
+                        part2 = LLVMBuildShl(self.builder, cast, c16, NONAME);
+                    }
+                } else if i == 1 {
+                    part1 = cast;
+                    if let Combination::Or = comb {
+                        part1 = LLVMBuildShl(self.builder, cast, c8, NONAME);
+                    }
+                } else {
+                    part0 = cast;
+                }
+            }
+
+            // combine all parts
+            match comb {
+                Combination::Or => LLVMBuildOr(
+                    self.builder,
+                    LLVMBuildOr(self.builder, part0, part1, NONAME),
+                    LLVMBuildOr(self.builder, part2, part3, NONAME),
+                    NONAME,
+                ),
+                Combination::Add => LLVMBuildAdd(
+                    self.builder,
+                    LLVMBuildAdd(self.builder, part0, part1, NONAME),
+                    LLVMBuildAdd(self.builder, part2, part3, NONAME),
+                    NONAME,
+                ),
+            }
+        }
+    }
+
+    /// Emit the correct LLVM code for the _xpulpvect_ extension depending on the mode.
+    ///
+    /// Called by `simd_alu_op()`.
+    ///
+    /// Will select the correct partial words and then call `simd_insn()` to execute
+    /// instruction code.
+    unsafe fn simd_mode(
+        &self,
+        is_hw: bool,
+        insn: SIMDInsn,
+        mode: SIMDMode,
+        op1: LLVMValueRef,
+        op2: LLVMValueRef,
+        part: u32,
+    ) -> LLVMValueRef {
+        let n = match is_hw {
+            true => 16 as u32,
+            false => 8 as u32,
+        };
+
+        let res = match mode {
+            SIMDMode::Normal => {
+                // get all ranges
+                // rs1
+                let sel1 = self.cast_select_bits(op1, (part * n) as u64, n);
+                // rs2
+                let sel2 = self.cast_select_bits(op2, (part * n) as u64, n);
+
+                self.simd_insn(is_hw, insn, sel1, sel2)
+            }
+            SIMDMode::Sc => {
+                // get all ranges
+                // rs1
+                let sel1 = self.cast_select_bits(op1, (part * n) as u64, n);
+                // rs2
+                let sel2 = self.cast_select_bits(op2, 0, n);
+
+                self.simd_insn(is_hw, insn, sel1, sel2)
+            }
+            SIMDMode::Sci => {
+                let sel1 = self.cast_select_bits(op1, (part * n) as u64, n);
+
+                self.simd_insn(is_hw, insn, sel1, op2)
+            }
+        };
+
+        LLVMBuildIntCast2(self.builder, res, LLVMInt32Type(), 0, NONAME)
+    }
+
+    /// Emit the correct LLVM code for the _xpulpvect_ extension depending on the instruction.
+    ///
+    /// Called by `simd_mode()`.
+    ///
+    /// Will emit the correct code depending on the instruction type.
+    unsafe fn simd_insn(
+        &self,
+        is_hw: bool,
+        insn: SIMDInsn,
+        sel1: LLVMValueRef,
+        sel2: LLVMValueRef,
+    ) -> LLVMValueRef {
+        // Constans for easier shifting
+        let c1_16 = LLVMConstInt(LLVMInt16Type(), 1, 0);
+        let c1_8 = LLVMConstInt(LLVMInt8Type(), 1, 0);
+
+        let c0_16 = LLVMConstInt(LLVMInt16Type(), 0, 0);
+        let c0_8 = LLVMConstInt(LLVMInt8Type(), 0, 0);
+
+        let sh_const = match is_hw {
+            true => c1_16,
+            false => c1_8,
+        };
+
+        let zero_const = match is_hw {
+            true => c0_16,
+            false => c0_8,
+        };
+
+        match insn {
+            SIMDInsn::Add => LLVMBuildAdd(self.builder, sel1, sel2, NONAME),
+            SIMDInsn::Sub => LLVMBuildSub(self.builder, sel1, sel2, NONAME),
+            SIMDInsn::Avg => {
+                let sum = LLVMBuildAdd(self.builder, sel1, sel2, NONAME);
+                LLVMBuildAShr(self.builder, sum, sh_const, NONAME)
+            }
+            SIMDInsn::Avgu => {
+                let sum = LLVMBuildAdd(self.builder, sel1, sel2, NONAME);
+                LLVMBuildLShr(self.builder, sum, sh_const, NONAME)
+            }
+            SIMDInsn::Min => {
+                let cmp = LLVMBuildICmp(self.builder, LLVMIntSLT, sel1, sel2, NONAME);
+                LLVMBuildSelect(self.builder, cmp, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Max => {
+                let cmp = LLVMBuildICmp(self.builder, LLVMIntSGT, sel1, sel2, NONAME);
+                LLVMBuildSelect(self.builder, cmp, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Minu => {
+                let cmp = LLVMBuildICmp(self.builder, LLVMIntULT, sel1, sel2, NONAME);
+                LLVMBuildSelect(self.builder, cmp, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Maxu => {
+                let cmp = LLVMBuildICmp(self.builder, LLVMIntUGT, sel1, sel2, NONAME);
+                LLVMBuildSelect(self.builder, cmp, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Srl => {
+                // rD[i] = rs1[i] >> op2[i] Note: Immediate is zero-extended, shift is logical
+
+                LLVMBuildLShr(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Sra => {
+                // rD[i] = rs1[i] >>> op2[i] Note: Immediate is zero-extended, shift is arithmetic
+
+                LLVMBuildAShr(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Sll => {
+                // rD[i] = rs1[i] << op2[i] Note: Immediate is zero-extended, shift is logical
+
+                LLVMBuildShl(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Or => {
+                // rD[i] = rs1[i] | op2[i]
+
+                LLVMBuildOr(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Xor => {
+                // rD[i] = rs1[i] ^ op2[i]
+
+                LLVMBuildXor(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::And => {
+                // rD[i] = rs1[i] & op2[i]
+
+                LLVMBuildAnd(self.builder, sel1, sel2, NONAME)
+            }
+            SIMDInsn::Abs => {
+                //  rD[i] = rs1 < 0 ? –rs1 : rs1
+
+                LLVMBuildSelect(
+                    self.builder,
+                    LLVMBuildICmp(self.builder, LLVMIntSLT, sel1, zero_const, NONAME),
+                    LLVMBuildNeg(self.builder, sel1, NONAME),
+                    sel1,
+                    NONAME,
+                )
+            }
+            SIMDInsn::Dotup | SIMDInsn::Sdotup => {
+                // Dotup:  rD = rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Sdotup: rD = rD + rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Note: All operations are unsigned
+
+                let cast1 = LLVMBuildIntCast2(self.builder, sel1, LLVMInt32Type(), 0, NONAME);
+                let cast2 = LLVMBuildIntCast2(self.builder, sel2, LLVMInt32Type(), 0, NONAME);
+
+                LLVMBuildMul(self.builder, cast1, cast2, NONAME)
+            }
+            SIMDInsn::Dotusp | SIMDInsn::Sdotusp => {
+                // Dotusp:  rD = rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Sdotusp: rD = rD + rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Note: rs1 is treated as unsigned, while rs2 is treated as signed
+
+                let cast1 = LLVMBuildIntCast2(self.builder, sel1, LLVMInt32Type(), 0, NONAME);
+                let cast2 = LLVMBuildIntCast2(self.builder, sel2, LLVMInt32Type(), 1, NONAME);
+
+                LLVMBuildMul(self.builder, cast1, cast2, NONAME)
+            }
+            SIMDInsn::Dotsp | SIMDInsn::Sdotsp => {
+                // Dotsp:  rD = rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Sdotsp: rD = rD + rs1[0] * op2[0] + rs1[1] * op2[1]
+                // Note: All operations are signed
+
+                let cast1 = LLVMBuildIntCast2(self.builder, sel1, LLVMInt32Type(), 1, NONAME);
+                let cast2 = LLVMBuildIntCast2(self.builder, sel2, LLVMInt32Type(), 1, NONAME);
+
+                LLVMBuildMul(self.builder, cast1, cast2, NONAME)
+            }
+        }
+    }
+
+    /// Selects `n` bits of 32bit register `reg` starting with bit `b` as lowest bit and
+    /// returns them as a LLVMInt32Type().
+    ///
+    /// If `inplace` is `true` it will keep the bits in their original position, else it will move
+    /// bits to lowest bits.
+    unsafe fn select_bits(&self, reg: LLVMValueRef, b: u64, n: u32, inplace: bool) -> LLVMValueRef {
+        // for n bit mask need number 2^n-1, then shifted to correct position with b
+        let m = (2u64.pow(n) - 1) << b;
+        let mask = LLVMConstInt(LLVMInt32Type(), m, 1);
+        // isolate bits, set rest to 0
+        let val = LLVMBuildAnd(self.builder, reg, mask, NONAME);
+
+        if !inplace {
+            // shift into lowest bits
+            LLVMBuildLShr(
+                self.builder,
+                val,
+                LLVMConstInt(LLVMInt32Type(), b as u64, 1),
+                NONAME,
+            )
+        } else {
+            val
+        }
+    }
+
+    /// Selects `n` bits of 32bit register `reg` starting with bit `b` as lowest bit and casts it
+    /// into `n` size LLVMIntType().
+    unsafe fn cast_select_bits(&self, reg: LLVMValueRef, b: u64, n: u32) -> LLVMValueRef {
+        let ty = LLVMIntType(n);
+        let sel = self.select_bits(reg, b, n, false);
+
+        LLVMBuildIntCast(self.builder, sel, ty, NONAME)
+    }
+
+    /// Select bit `b` of 32bit register `reg` as lowest bit and returns it as a LLVMInt1Type().
+    unsafe fn select_bit(&self, reg: LLVMValueRef, b: u64) -> LLVMValueRef {
+        // for n bit mask need number 2^n-1, then shifted to correct position with b
+        let m = 1u64 << b;
+        let mask = LLVMConstInt(LLVMInt32Type(), m, 1);
+        // isolate bits, set rest to 0
+        let val = LLVMBuildAnd(self.builder, reg, mask, NONAME);
+        // shift into lowest bits
+        let shift = LLVMBuildLShr(
+            self.builder,
+            val,
+            LLVMConstInt(LLVMInt32Type(), b as u64, 1),
+            NONAME,
+        );
+        LLVMBuildIntCast(self.builder, shift, LLVMInt1Type(), NONAME)
+    }
+
+    /// Returns selected half word `sel` of register `reg` in lowest bits as a LLVMInt32Type()
+    /// based on runtime input.
+    ///
+    /// If `sel` is 1 then the top half word is selected.
+    unsafe fn select_half_word(&self, reg: LLVMValueRef, sel: LLVMValueRef) -> LLVMValueRef {
+        // build and mask correct half of word
+        let s = LLVMBuildIntCast(self.builder, sel, LLVMInt32Type(), NONAME);
+        let cmask = LLVMConstInt(LLVMInt32Type(), 0x0000FFFF, 0);
+        let shift = LLVMConstInt(LLVMInt32Type(), 16, 1);
+        let mask = LLVMBuildShl(
+            self.builder,
+            cmask,
+            LLVMBuildMul(self.builder, s, shift, NONAME),
+            NONAME,
+        );
+        let half = LLVMBuildAnd(self.builder, reg, mask, NONAME);
+
+        // shift half to lowest bits if sel==1, i.e. upper half selected
+        LLVMBuildSelect(
+            self.builder,
+            sel,
+            LLVMBuildLShr(
+                self.builder,
+                half,
+                LLVMConstInt(LLVMInt32Type(), 16, 1),
+                NONAME,
+            ),
+            half,
+            NONAME,
+        )
+    }
+
+    /// Returns selected byte \[`sel1`:`sel0`\] of `reg` in lowest bits as a LLVMInt32Type()
+    /// based on runtime input.
+    ///
+    /// \[`sel1`:`sel0`\] index which byte is selected with `11` as highest and `00` as lowest byte.
+    unsafe fn select_byte(
+        &self,
+        reg: LLVMValueRef,
+        sel0: LLVMValueRef,
+        sel1: LLVMValueRef,
+    ) -> LLVMValueRef {
+        // build and mask correct byte of word
+        let s0 = LLVMBuildIntCast2(self.builder, sel0, LLVMInt32Type(), 0, NONAME);
+        let s1 = LLVMBuildIntCast2(self.builder, sel1, LLVMInt32Type(), 0, NONAME);
+        let cmask = LLVMConstInt(LLVMInt32Type(), 0xFF, 0);
+        let c16 = LLVMConstInt(LLVMInt32Type(), 16, 1);
+        let c8 = LLVMConstInt(LLVMInt32Type(), 8, 1);
+        let mut mask = LLVMBuildShl(
+            self.builder,
+            cmask,
+            LLVMBuildMul(self.builder, s1, c16, NONAME),
+            NONAME,
+        );
+        mask = LLVMBuildShl(
+            self.builder,
+            mask,
+            LLVMBuildMul(self.builder, s0, c8, NONAME),
+            NONAME,
+        );
+        let mut byte = LLVMBuildAnd(self.builder, reg, mask, NONAME);
+
+        // shift byte to lowest bits
+        byte = LLVMBuildSelect(
+            self.builder,
+            sel1,
+            LLVMBuildLShr(self.builder, byte, c16, NONAME),
+            byte,
+            NONAME,
+        );
+
+        LLVMBuildSelect(
+            self.builder,
+            sel0,
+            LLVMBuildLShr(self.builder, byte, c8, NONAME),
+            byte,
+            NONAME,
+        )
+    }
+
+    unsafe fn emit_luimm5_rd_rs1_rs2(&self, data: riscv::FormatLuimm5RdRs1Rs2) -> Result<()> {
+        trace!(
+            "{} x{} = x{}, x{}, x{}",
+            data.op,
+            data.rd,
+            data.rs1,
+            data.rs2,
+            data.luimm5
+        );
+        let name = format!("{}\0", data.op);
+        let name = name.as_ptr() as *const _;
+
+        // Handle other operations.
+        let rs1 = self.read_reg(data.rs1);
+        let rs2 = self.read_reg(data.rs2);
+        let luimm5 = self.read_reg(data.luimm5);
+        let value = match data.op {
+            riscv::OpcodeLuimm5RdRs1Rs2::PAddn => LLVMBuildAShr(
+                self.builder,
+                LLVMBuildAdd(self.builder, rs1, rs2, NONAME),
+                luimm5,
+                name,
+            ),
+            riscv::OpcodeLuimm5RdRs1Rs2::PAddun => LLVMBuildLShr(
+                self.builder,
+                LLVMBuildAdd(self.builder, rs1, rs2, NONAME),
+                luimm5,
+                name,
+            ),
+            // _ => bail!("Unsupported opcode {}", data.op),
         };
         self.write_reg(data.rd, value);
         Ok(())
@@ -5543,94 +8271,94 @@ impl<'a> InstructionTranslator<'a> {
             riscv::OpcodeRdRs1Shamt::Slli => LLVMBuildShl(self.builder, rs1, shamt, name),
             riscv::OpcodeRdRs1Shamt::Srli => LLVMBuildLShr(self.builder, rs1, shamt, name),
             riscv::OpcodeRdRs1Shamt::Srai => LLVMBuildAShr(self.builder, rs1, shamt, name),
-            _ => bail!("Unsupported opcode {}", data.op),
+            // _ => bail!("Unsupported opcode {}", data.op),
         };
         self.write_reg(data.rd, value);
         Ok(())
     }
 
-    unsafe fn emit_rs1(&self, data: riscv::FormatRs1) -> Result<()> {
-        trace!("{} x{}", data.op, data.rs1);
-        let name = format!("{}\0", data.op);
-        let _name = name.as_ptr() as *const _;
-        let rs1 = self.read_reg(data.rs1);
+    // unsafe fn emit_rs1(&self, data: riscv::FormatRs1) -> Result<()> {
+    //     trace!("{} x{}", data.op, data.rs1);
+    //     let name = format!("{}\0", data.op);
+    //     let _name = name.as_ptr() as *const _;
+    //     let rs1 = self.read_reg(data.rs1);
 
-        // suppress compiler warning that detects the bail! statement as unrechable
-        // Dmrep is currently the OpcodeRs1 but this might change
-        #[allow(unreachable_patterns)]
-        match data.op {
-            riscv::OpcodeRs1::Dmrep => self
-                .section
-                .emit_call("banshee_dma_rep", [self.dma_ptr(), rs1]),
-            _ => bail!("Unsupported opcode {}", data.op),
-        };
-        Ok(())
-    }
+    //     // suppress compiler warning that detects the bail! statement as unrechable
+    //     // Dmrep is currently the OpcodeRs1 but this might change
+    //     #[allow(unreachable_patterns)]
+    //     match data.op {
+    //         riscv::OpcodeRs1::Dmrep => self
+    //             .section
+    //             .emit_call("banshee_dma_rep", [self.dma_ptr(), rs1]),
+    //         _ => bail!("Unsupported opcode {}", data.op),
+    //     };
+    //     Ok(())
+    // }
 
-    unsafe fn emit_rs1_rs2(&self, data: riscv::FormatRs1Rs2) -> Result<()> {
-        trace!("{} x{}, x{}", data.op, data.rs1, data.rs2);
-        let name = format!("{}\0", data.op);
-        let _name = name.as_ptr() as *const _;
-        let rs1 = self.read_reg(data.rs1);
-        let rs2 = self.read_reg(data.rs2);
+    // unsafe fn emit_rs1_rs2(&self, data: riscv::FormatRs1Rs2) -> Result<()> {
+    //     trace!("{} x{}, x{}", data.op, data.rs1, data.rs2);
+    //     let name = format!("{}\0", data.op);
+    //     let _name = name.as_ptr() as *const _;
+    //     let rs1 = self.read_reg(data.rs1);
+    //     let rs2 = self.read_reg(data.rs2);
 
-        // Perform the SSR write op
-        match data.op {
-            riscv::OpcodeRs1Rs2::Scfgw => {
-                // reorder rs2 to form address
-                // rs2[11:5]=reg_word rs2[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
-                let reg = LLVMBuildLShr(
-                    self.builder,
-                    rs2,
-                    LLVMConstInt(LLVMInt32Type(), 2 as u64, 0),
-                    NONAME,
-                );
-                let reg_masked = LLVMBuildAnd(
-                    self.builder,
-                    reg,
-                    LLVMConstInt(LLVMInt32Type(), 0xf8 as u64, 0),
-                    NONAME,
-                );
-                let rs2_dm = LLVMBuildAnd(
-                    self.builder,
-                    rs2,
-                    LLVMConstInt(LLVMInt32Type(), 0x1f as u64, 0),
-                    NONAME,
-                );
-                let rs2_dm_shifted = LLVMBuildShl(
-                    self.builder,
-                    rs2_dm,
-                    LLVMConstInt(LLVMInt32Type(), 8 as u64, 0),
-                    NONAME,
-                );
-                let addr_off = LLVMBuildOr(self.builder, rs2_dm_shifted, reg_masked, NONAME);
+    //     // Perform the SSR write op
+    //     match data.op {
+    //         riscv::OpcodeRs1Rs2::Scfgw => {
+    //             // reorder rs2 to form address
+    //             // rs2[11:5]=reg_word rs2[4:0]=dm -> addr_off = {dm, reg_word[4:0], 000}
+    //             let reg = LLVMBuildLShr(
+    //                 self.builder,
+    //                 rs2,
+    //                 LLVMConstInt(LLVMInt32Type(), 2 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let reg_masked = LLVMBuildAnd(
+    //                 self.builder,
+    //                 reg,
+    //                 LLVMConstInt(LLVMInt32Type(), 0xf8 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let rs2_dm = LLVMBuildAnd(
+    //                 self.builder,
+    //                 rs2,
+    //                 LLVMConstInt(LLVMInt32Type(), 0x1f as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let rs2_dm_shifted = LLVMBuildShl(
+    //                 self.builder,
+    //                 rs2_dm,
+    //                 LLVMConstInt(LLVMInt32Type(), 8 as u64, 0),
+    //                 NONAME,
+    //             );
+    //             let addr_off = LLVMBuildOr(self.builder, rs2_dm_shifted, reg_masked, NONAME);
 
-                let addr = LLVMBuildAdd(
-                    self.builder,
-                    LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
-                    addr_off,
-                    NONAME,
-                );
-                self.write_mem(addr, rs1, 2);
-                return Ok(());
-            }
-            _ => (),
-        };
+    //             let addr = LLVMBuildAdd(
+    //                 self.builder,
+    //                 LLVMConstInt(LLVMInt32Type(), SSR_BASE, 0),
+    //                 addr_off,
+    //                 NONAME,
+    //             );
+    //             self.write_mem(addr, rs1, 2);
+    //             return Ok(());
+    //         }
+    //         _ => (),
+    //     };
 
-        match data.op {
-            riscv::OpcodeRs1Rs2::Dmsrc => self
-                .section
-                .emit_call("banshee_dma_src", [self.dma_ptr(), rs1, rs2]),
-            riscv::OpcodeRs1Rs2::Dmdst => self
-                .section
-                .emit_call("banshee_dma_dst", [self.dma_ptr(), rs1, rs2]),
-            riscv::OpcodeRs1Rs2::Dmstr => self
-                .section
-                .emit_call("banshee_dma_str", [self.dma_ptr(), rs1, rs2]),
-            _ => bail!("Unsupported opcode {}", data.op),
-        };
-        Ok(())
-    }
+    //     match data.op {
+    //         riscv::OpcodeRs1Rs2::Dmsrc => self
+    //             .section
+    //             .emit_call("banshee_dma_src", [self.dma_ptr(), rs1, rs2]),
+    //         riscv::OpcodeRs1Rs2::Dmdst => self
+    //             .section
+    //             .emit_call("banshee_dma_dst", [self.dma_ptr(), rs1, rs2]),
+    //         riscv::OpcodeRs1Rs2::Dmstr => self
+    //             .section
+    //             .emit_call("banshee_dma_str", [self.dma_ptr(), rs1, rs2]),
+    //         _ => bail!("Unsupported opcode {}", data.op),
+    //     };
+    //     Ok(())
+    // }
 
     unsafe fn emit_unit(&self, data: riscv::FormatUnit) -> Result<()> {
         trace!("{}", data.op,);
@@ -5703,10 +8431,16 @@ impl<'a> InstructionTranslator<'a> {
         &self,
         base: LLVMValueRef,
         offset: LLVMValueRef,
+        rs: u32,
         size: usize,
         sext: bool,
     ) -> LLVMValueRef {
-        self.read_mem(LLVMBuildAdd(self.builder, base, offset, NONAME), size, sext)
+        self.read_mem(
+            LLVMBuildAdd(self.builder, base, offset, NONAME),
+            rs,
+            size,
+            sext,
+        )
     }
 
     /// Emit the code to check for any interrupt
@@ -5949,6 +8683,44 @@ impl<'a> InstructionTranslator<'a> {
         LLVMPositionBuilderAtEnd(self.builder, bb_noirq);
     }
 
+    /// Emit code to calculate new latency of WriteReg.
+    ///
+    /// Checks if register `i` which has a WriteReg access gets value from some ReadMem in `mem_latencies`
+    /// by comparing to all memory accesses. If so, it associates the ReadMem latency to register `i`.
+    /// Else it will assign the instruction latency `gen_latency`. The resulting latency is added to `max_cycle`,
+    /// the cycle where all prerequisites are ready for this instruction.
+    ///
+    /// `i` is the register number.
+    unsafe fn emit_latency_cycle(
+        &self,
+        i: u8,
+        mem_latencies: &Vec<(Option<&u8>, LLVMValueRef)>,
+        gen_latency: LLVMValueRef,
+        max_cycle: LLVMValueRef,
+    ) -> LLVMValueRef {
+        // If there is a register `i`, where memory loads to as well, get it
+        let mem_latency = mem_latencies.iter().find(|(r, _)| match r {
+            Some(reg) => {
+                if **reg == i {
+                    true
+                } else {
+                    false
+                }
+            }
+            None => false,
+        });
+
+        // If there was memory access, use that latency, else use generic latency
+        let latency = if let Some((_, l)) = mem_latency {
+            *l
+        } else {
+            gen_latency
+        };
+
+        // Add latency to max_cycle to determine when register is ready
+        LLVMBuildAdd(self.builder, max_cycle, latency, NONAME)
+    }
+
     /// Emit the code for instruction tracing.
     ///
     /// Only emits the code once if called multiple times. Does nothing if the
@@ -6005,19 +8777,23 @@ impl<'a> InstructionTranslator<'a> {
             LLVMBuildStore(self.builder, max_cycle, self.cycle_ptr());
 
             // Check if instruction is a memory access
-            let mem_access = accesses.iter().find(|(a, _)| match a {
-                TraceAccess::ReadMem => true,
+            let mem_accesses = accesses.iter().filter(|(a, _)| match a {
+                TraceAccess::ReadMem(_x) => true,
                 TraceAccess::RMWMem => true,
                 _ => false,
             });
 
-            // Get the instruction mnemonic (generated by riscv-opcodes)
-            let inst_name = riscv::inst_to_string(self.inst);
-
-            let latency = if let Some(access) = mem_access {
+            // Save latency for all memory accesses in vector
+            let mut mem_latencies = Vec::new();
+            for access in mem_accesses {
+                // Extract register to read to
+                let reg_for_mem = match access {
+                    (TraceAccess::ReadMem(reg), _) => Some(reg),
+                    _ => None,
+                };
                 // Check config
                 let (is_tcdm, _tcdm_ptr) = self.emit_tcdm_check(access.1);
-                LLVMBuildSelect(
+                let latency = LLVMBuildSelect(
                     self.builder,
                     is_tcdm,
                     LLVMConstInt(
@@ -6035,27 +8811,33 @@ impl<'a> InstructionTranslator<'a> {
                         0,
                     ),
                     NONAME,
-                )
-            } else {
-                // Get instruction's latency or use default of one cycle
-                LLVMConstInt(
-                    LLVMTypeOf(max_cycle),
-                    self.get_latency(inst_name, 1) as u64,
-                    0,
-                )
-            };
+                );
+                mem_latencies.push((reg_for_mem, latency));
+            }
 
-            // Add latency of this instruction
-            let cycle = LLVMBuildAdd(self.builder, max_cycle, latency, NONAME);
+            // Get the instruction mnemonic (generated by riscv-opcodes)
+            let inst_name = riscv::inst_to_string(self.inst);
+
+            // Get instruction's latency or use default of one cycle
+            let gen_latency = LLVMConstInt(
+                LLVMTypeOf(max_cycle),
+                self.get_latency(inst_name, 1) as u64,
+                0,
+            );
 
             // Write new dependencies
             for &(access, _data) in accesses.iter().take(TRACE_BUFFER_LEN as usize) {
                 match access {
-                    // ReadMem => random latency,
                     TraceAccess::WriteReg(i) => {
+                        let cycle =
+                            self.emit_latency_cycle(i, &mem_latencies, gen_latency, max_cycle);
+
                         LLVMBuildStore(self.builder, cycle, self.reg_cycle_ptr(i as u32))
                     }
                     TraceAccess::WriteFReg(i) => {
+                        let cycle =
+                            self.emit_latency_cycle(i, &mem_latencies, gen_latency, max_cycle);
+
                         LLVMBuildStore(self.builder, cycle, self.freg_cycle_ptr(i as u32))
                     }
                     _ => continue,
@@ -6123,6 +8905,7 @@ impl<'a> InstructionTranslator<'a> {
     }
 
     /// Log an access for the trace.
+    // Can be used for debugging
     fn trace_access(&self, access: TraceAccess, data: LLVMValueRef) {
         if !self.trace_disabled.get() {
             self.trace_accesses.borrow_mut().push((access, data));
@@ -6181,8 +8964,14 @@ impl<'a> InstructionTranslator<'a> {
     }
 
     /// Emit the code necessary to load a value from memory.
-    unsafe fn read_mem(&self, addr: LLVMValueRef, size: usize, sext: bool) -> LLVMValueRef {
-        self.trace_access(TraceAccess::ReadMem, addr);
+    unsafe fn read_mem(
+        &self,
+        addr: LLVMValueRef,
+        rs: u32,
+        size: usize,
+        sext: bool,
+    ) -> LLVMValueRef {
+        self.trace_access(TraceAccess::ReadMem(rs as u8), addr);
         let bb_end = LLVMCreateBasicBlockInContext(self.section.engine.context, NONAME);
         LLVMInsertExistingBasicBlockAfterInsertBlock(self.builder, bb_end);
 
@@ -6501,6 +9290,9 @@ impl<'a> InstructionTranslator<'a> {
     }
 
     /// Emit the code necessary to read a value from a register.
+    ///
+    /// `rs` can be from 0 to 31. Values over 31 are accepted but will cause problems
+    /// with tracing. If `rs==0` will load value 0.
     unsafe fn read_reg(&self, rs: u32) -> LLVMValueRef {
         if rs == 0 {
             LLVMConstInt(LLVMInt32Type(), 0, 0)
@@ -7570,10 +10362,10 @@ impl<'a> InstructionTranslator<'a> {
         )
     }
 
-    unsafe fn dma_ptr(&self) -> LLVMValueRef {
-        self.section
-            .emit_call_with_name("banshee_dma_ptr", [self.section.state_ptr], "ptr_dma")
-    }
+    // unsafe fn dma_ptr(&self) -> LLVMValueRef {
+    //     self.section
+    //         .emit_call_with_name("banshee_dma_ptr", [self.section.state_ptr], "ptr_dma")
+    // }
 
     /// Extract latency from the config file or assign default value
     unsafe fn get_latency(&self, op: String, default_value: u64) -> u64 {
@@ -7584,4 +10376,76 @@ impl<'a> InstructionTranslator<'a> {
             default_value
         }
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum SIMDSize {
+    H,
+    B,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum SIMDMode {
+    Normal,
+    Sc,
+    Sci,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum SIMDInsn {
+    Add,
+    Sub,
+    Avg,
+    Avgu,
+    Min,
+    Minu,
+    Max,
+    Maxu,
+    Srl,
+    Sra,
+    Sll,
+    Or,
+    Xor,
+    And,
+    Abs,
+    Dotup,
+    Dotusp,
+    Dotsp,
+    Sdotup,
+    Sdotusp,
+    Sdotsp,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Combination {
+    Or,
+    Add,
+}
+
+/// Sizes of xpulppostmod instructions
+/// W = word, H = halfword, B = byte
+#[derive(Debug, Clone, Copy)]
+enum PostmodSize {
+    W,
+    H,
+    B,
+}
+
+/// Modes of xpulppostmod instructions
+/// Irpost = Register-Immediate instr. with post-increment
+/// Rrpost = Register-Register instr. with post-increment
+/// Rr = Register-Register instr.
+#[derive(Debug, Clone, Copy)]
+enum PostmodMode {
+    Irpost,
+    Rrpost,
+    Rr,
+}
+
+/// Instruction types of xpulppostmod instructions
+/// L = load, S = store
+#[derive(Debug, Clone, Copy)]
+enum PostmodInsn {
+    L,
+    S,
 }
