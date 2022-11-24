@@ -114,6 +114,7 @@ pub enum OpcodeUnit {
     Mret,
     Dret,
     Wfi,
+    CAddi4spn,
     CFld,
     CLw,
     CFlw,
@@ -164,6 +165,7 @@ impl std::fmt::Display for OpcodeUnit {
             Self::Mret => write!(f, "mret"),
             Self::Dret => write!(f, "dret"),
             Self::Wfi => write!(f, "wfi"),
+            Self::CAddi4spn => write!(f, "c.addi4spn"),
             Self::CFld => write!(f, "c.fld"),
             Self::CLw => write!(f, "c.lw"),
             Self::CFlw => write!(f, "c.flw"),
@@ -2464,6 +2466,7 @@ pub fn parse_u32(raw: u32) -> Format {
         _ => (),
     }
     match raw & 0xe003 {
+        0x0 => return parse_unit(OpcodeUnit::CAddi4spn, raw),
         0x2000 => return parse_unit(OpcodeUnit::CFld, raw),
         0x4000 => return parse_unit(OpcodeUnit::CLw, raw),
         0x6000 => return parse_unit(OpcodeUnit::CFlw, raw),
