@@ -1020,7 +1020,15 @@ impl<'a> InstructionTranslator<'a> {
             // riscv::Format::Rs1(x) => self.emit_rs1(x),
             // riscv::Format::Rs1Rs2(x) => self.emit_rs1_rs2(x),
             // riscv::Format::RdRs2(x) => self.emit_rd_rs2(x),
-            riscv::Format::Unit(x) => self.emit_unit(x),
+            riscv::Format::Unit(x) => {
+                if self.inst.raw() == 0 {
+                    // Only generate a warning if the instruction is zero, as this usually comes from padding
+                    warn!("Zero instruction at 0x{:x}", self.addr);
+                    return Ok(());
+                } else {
+                    self.emit_unit(x)
+                }
+            }
             _ => {
                 if self.inst.raw() == 0 {
                     // Only generate a warning if the instruction is zero, as this usually comes from padding
