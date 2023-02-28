@@ -744,9 +744,13 @@ impl MemPoolITA {
                         shift_sum = 0;
                     } else {
                         shift_sum = (current_max[j as usize] - max[[j as usize]]) / 32;
-                        if (((current_max[j as usize] - max[[j as usize]]) / 32) - shift_sum) as f64
-                            >= 0.5
-                        {
+                        // if (((current_max[j as usize] - max[[j as usize]]) / 32) - shift_sum) as f64
+                        //     >= 0.5
+                        // {
+                        //     shift_sum += 1;
+                        // }
+                        let shift_int = (current_max[j as usize] as i32) - (max[[j as usize]] as i32);
+                        if shift_int % 32 >= 16 {
                             shift_sum += 1;
                         }
                     }
@@ -757,7 +761,7 @@ impl MemPoolITA {
 
                 let qb = a_requant
                     .slice_mut(s![0, .., i * 16..(i + 1) * 16])
-                    .mapv(|x| x - max[[j as usize]]);
+                    .mapv(|x| x as i32 - max[[j as usize]] as i32);
 
                 let mut qexp = 0;
                 for k in 0..qb.ncols() {
@@ -780,8 +784,8 @@ impl MemPoolITA {
                 ((2.0f64.powi(8) - 1.0) * 2.0f64.powi(10)) as i32 / exp_partial_sum[j as usize];
             for k in 0..seq_len {
                 let mut shift =
-                    ((max[j as usize] - (a_requant[[0, j as usize, k as usize]])) / 32) as i32;
-                let shift_int = max[j as usize] - (a_requant[[0, j as usize, k as usize]]) as i8;
+                    (((max[j as usize] as i32) - (a_requant[[0, j as usize, k as usize]] as i32)) / 32) as i32;
+                let shift_int = (max[j as usize] as i32) - (a_requant[[0, j as usize, k as usize]] as i32);
                 if shift_int % 32 >= 16 {
                     shift += 1;
                 }
