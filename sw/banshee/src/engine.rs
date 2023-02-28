@@ -645,7 +645,7 @@ impl<'a, 'b> Cpu<'a, 'b> {
         }
     }
 
-    fn binary_load(&self, addr: u32, size: u8) -> u32 {
+    pub fn binary_load(&self, addr: u32, size: u8) -> u32 {
         match addr {
             x if x == self.engine.config.address.tcdm_start => {
                 self.engine.config.memory[self.cluster_id].tcdm.start
@@ -704,6 +704,7 @@ impl<'a, 'b> Cpu<'a, 'b> {
                 && x < self.engine.config.memory[self.cluster_id].periphs.end =>
             {
                 self.engine.peripherals.load(
+                    &self,
                     self.cluster_id,
                     addr - self.engine.config.memory[self.cluster_id].periphs.start,
                     size,
@@ -755,7 +756,7 @@ impl<'a, 'b> Cpu<'a, 'b> {
         }
     }
 
-    fn binary_store(&self, addr: u32, value: u32, mask: u32, size: u8) {
+    pub fn binary_store(&self, addr: u32, value: u32, mask: u32, size: u8) {
         match addr {
             x if x == self.engine.config.address.tcdm_start => (), // tcdm_start
             x if x == self.engine.config.address.tcdm_end => (),   // tcdm_end
@@ -838,6 +839,7 @@ impl<'a, 'b> Cpu<'a, 'b> {
                 && x < self.engine.config.memory[self.cluster_id].periphs.end =>
             {
                 self.engine.peripherals.store(
+                    &self,
                     self.cluster_id,
                     addr - self.engine.config.memory[self.cluster_id].periphs.start,
                     value,
@@ -945,6 +947,29 @@ impl<'a, 'b> Cpu<'a, 'b> {
         prev as u32
     }
 
+    pub fn binary_memcpy(&self, mut dest: u32, mut src: u32, n: u32) {
+        // n in bytes
+        trace!("MEMCPY From {:08x} to {:08x} num: {:08x}", src, dest, n);
+        if dest % 4 == 0 && src % 4 == 0 && n % 4 == 0 {
+            warn!("MEMCPY aligned");
+            // Aligned transfer
+            for _ in 0..n / 4 {
+                let tmp = self.binary_load(src, 2);
+                self.binary_store(dest, tmp, u32::MAX, 2);
+                src += 4;
+                dest += 4;
+            }
+        } else {
+            warn!("MEMCPY unaligned");
+            for _ in 0..n {
+                let tmp = self.binary_load(src, 0);
+                self.binary_store(dest, tmp, (u8::MAX as u32) << (8 * (dest % 4)), 0);
+                src += 1;
+                dest += 1;
+            }
+        }
+    }
+
     fn binary_csr_read(&self, csr: riscv::Csr, notrace: u32) -> u32 {
         if notrace == 0 {
             trace!("Read CSR {:?}", csr);
@@ -1010,7 +1035,7 @@ impl<'a, 'b> Cpu<'a, 'b> {
         self.engine.had_error.store(true, Ordering::SeqCst);
     }
 
-    fn binary_trace(&self, addr: u32, inst: u32, accesses: &[TraceAccess], data: &[u64]) {
+    unsafe fn binary_trace(&self, addr: u32, inst: u32, accesses: &[TraceAccess], data: &[u64]) {
         // Assemble the arguments.
         let args = accesses.iter().copied().zip(data.iter().copied());
         let mut args = args.map(|(access, data)| match access {
@@ -1027,6 +1052,46 @@ impl<'a, 'b> Cpu<'a, 'b> {
             TraceAccess::WriteF32Reg(x) => {
                 format!("f{:02}={:>12.4}", x, f32::from_bits(data as u32))
             }
+            TraceAccess::Readf8Reg(x) => format!(
+                "f{:02}:[{:>5.3}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_00ff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32)
+            ),
+            TraceAccess::Writef8Reg(x) => format!(
+                "f{:02}=[{:>5.3}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_00ff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
+            TraceAccess::Readf16Reg(x) => format!(
+                "f{:02}=[{:>8.4}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_ffff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
+            TraceAccess::Writef16Reg(x) => format!(
+                "f{:02}=[{:>5.3}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_00ff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
             TraceAccess::Readvf64sReg(x) => format!(
                 "f{:02}:[{:>12.4}, {:>12.4}]",
                 x,
@@ -1038,6 +1103,166 @@ impl<'a, 'b> Cpu<'a, 'b> {
                 x,
                 f32::from_bits((data >> 32) as u32),
                 f32::from_bits((data) as u32)
+            ),
+            TraceAccess::Readvf64hReg(x) => format!(
+                "f{:02}:[{:>8.4}, {:>8.4}, {:>8.4}, {:>8.4}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0xffff_0000_0000_0000) >> 48,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_ffff_0000_0000) >> 32,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_ffff_0000) >> 16,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_ffff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
+            TraceAccess::Writevf64hReg(x) => format!(
+                "f{:02}=[{:>8.4}, {:>8.4}, {:>8.4}, {:>8.4}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0xffff_0000_0000_0000) >> 48,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_ffff_0000_0000) >> 32,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_ffff_0000) >> 16,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_ffff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt16f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
+            TraceAccess::Readvf64bReg(x) => format!(
+                "f{:02}:[{:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0xff00_0000_0000_0000) >> 56,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x00ff_0000_0000_0000) >> 48,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_ff00_0000_0000) >> 40,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_00ff_0000_0000) >> 32,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_ff00_0000) >> 24,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_00ff_0000) >> 16,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_ff00) >> 8,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_00ff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+            ),
+            TraceAccess::Writevf64bReg(x) => format!(
+                "f{:02}=[{:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}, {:>5.3}]",
+                x,
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0xff00_0000_0000_0000) >> 56,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x00ff_0000_0000_0000) >> 48,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_ff00_0000_0000) >> 40,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_00ff_0000_0000) >> 32,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_ff00_0000) >> 24,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_00ff_0000) >> 16,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_ff00) >> 8,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
+                f32::from_bits(flexfloat::ff_instruction_cvt_to_s(
+                    (data & 0x0000_0000_0000_00ff) >> 0,
+                    flexfloat::FfOpCvt::Fcvt8f2f,
+                    false,
+                    false
+                ) as u32),
             ),
         });
         let args = args.join(" ");
@@ -1297,13 +1522,21 @@ pub enum TraceAccess {
     ReadMem(u8),
     ReadReg(u8),
     ReadFReg(u8),
+    Readf8Reg(u8),
+    Readf16Reg(u8),
     ReadF32Reg(u8),
     Readvf64sReg(u8),
+    Readvf64hReg(u8),
+    Readvf64bReg(u8),
     WriteMem,
     WriteReg(u8),
     WriteFReg(u8),
+    Writef8Reg(u8),
+    Writef16Reg(u8),
     WriteF32Reg(u8),
     Writevf64sReg(u8),
+    Writevf64hReg(u8),
+    Writevf64bReg(u8),
     RMWMem,
 }
 
