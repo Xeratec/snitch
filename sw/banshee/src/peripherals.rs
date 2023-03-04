@@ -326,6 +326,7 @@ impl Peripheral for MemPoolITA {
                 let out_addresses: [u32; 4] = [0x000c0300, 0x000c0700, 0x000c0b00, 0x000c0f00];
                 let head_config = std::mem::transmute::<u32, [u8; 4]>(value);
                 let mut return_value = 0;
+                debug!("[ITA] Store config {:x}", value);
                 for (i, c) in head_config.iter().enumerate() {
                     if *c & 0x1 == 1 {
                         // Start ITA
@@ -341,6 +342,7 @@ impl Peripheral for MemPoolITA {
                     }
                 }
                 self.config.store(return_value, Ordering::SeqCst);
+                debug!("[ITA] Save config {:x}", return_value);
             },
             0x04 => self.start_address.store(value as u32, Ordering::SeqCst),
             0x08 => unsafe {
@@ -456,6 +458,7 @@ impl MemPoolITA {
                     for y in 0..4 {
                         let test = cpu.binary_load(address + address_offset + y, 2);
                     }
+                    trace!("[ITA] Store OUT to 0x{:x}", address + address_offset);
                     address_offset += 4;
                     if address_offset % 0x100 == 0 {
                         address_offset -= 0x0100;
@@ -489,6 +492,10 @@ impl MemPoolITA {
         let b3_addr = start + offset * 7;
         let b2_addr = start + offset * 8;
         let b1_addr = start + offset * 9;
+
+        debug!("[ITA]: Start Address 0x{:x}, Out Address {}", start, out_address);
+        debug!("[ITA]: EPS Mul 0x{:x},       Right Shift {}", _eps_mult, _right_shift);
+
 
         let mut q = Array2::<i8>::zeros((64, 64));
         MemPoolITA::ita_load_2d(cpu, &mut q, q_addr, 64, 64, 4);
@@ -544,22 +551,25 @@ impl MemPoolITA {
         // requantization of q_p
         let mut q_p_requant = Array3::<i8>::zeros((1, 64, 64));
         MemPoolITA::requantization_3d(&mut q_p, &mut q_p_requant, 52, 14);
-        debug!("q_p_requant: {}", q_p_requant);
+        // debug!("q_p_requant: {}", q_p_requant);
 
         // key_projection_space_transformation
         // key_projection_space_transformation(&mut k_p, &mut k, &mut w_k, &mut b_k, 1);
+        // debug!("k: {}", k);
+        // debug!("w_k: {}", w_k);
+        // debug!("b_k: {}", b_k);
         MemPoolITA::projection_space_transformation(&mut k_p, &mut k, &mut w_k, &mut b_k, 1);
         // requantization of k_p
         let mut k_p_requant = Array3::<i8>::zeros((1, 64, 64));
         MemPoolITA::requantization_3d(&mut k_p, &mut k_p_requant, 66, 14);
-        debug!("k_p_requant: {}", k_p_requant);
+        // debug!("k_p_requant: {}", k_p_requant);
 
         // query_key_correlation
         let mut qk = Array3::<i32>::zeros((1, 64, 64));
         MemPoolITA::query_key_correlation(&mut q_p_requant, &mut k_p_requant, &mut qk);
         // requantization of qk
         MemPoolITA::requantization_3d(&mut qk, &mut a_requant, 19, 14);
-        debug!("a_requant: {}", a_requant);
+        // debug!("a_requant: {}", a_requant);
 
         // streaming_partial_softmax
         MemPoolITA::streaming_partial_softmax(&mut a_requant, &mut a_partial_softmax, 64);
@@ -570,7 +580,7 @@ impl MemPoolITA {
         // requantization of v_p
         let mut v_p_requant = Array3::<i8>::zeros((1, 64, 64));
         MemPoolITA::requantization_3d(&mut v_p, &mut v_p_requant, 54, 14);
-        debug!("v_p_requant: {}", v_p_requant);
+        // debug!("v_p_requant: {}", v_p_requant);
 
         // single_head_computation
         let mut o_softmax = Array3::<i32>::zeros((1, 64, 64));
@@ -582,14 +592,19 @@ impl MemPoolITA {
         // requantization of o_softmax
         let mut o_softmax_requant = Array3::<i8>::zeros((1, 64, 64));
         MemPoolITA::requantization_3d(&mut o_softmax, &mut o_softmax_requant, 76, 14);
-        debug!("o_softmax_requant: {}", o_softmax_requant);
+        // debug!("o_softmax_requant: {}", o_softmax_requant);
 
         // multi_head_computation
         MemPoolITA::multi_head_computation(&mut o_softmax_requant, &mut out, &mut w_o, &mut b_o, 1);
         // parallel requantization of out
         let mut out_requant = Array2::<i8>::zeros((64, 64));
         MemPoolITA::parallel_requantize3d(&mut out, &mut out_requant, 6, 14);
-        debug!("out_requant: {}", out_requant);
+        // debug!("out_requant: {}", out_requant);
+
+        // for j in 0..out_requant.shape()[1] {
+        //     let row = out_requant.slice(s![j, ..]);
+        //     debug!("out[{},:]:\n{}", j, row);
+        // }
 
         // Store the output
         MemPoolITA::ita_store_2d(cpu, &out_requant, out_address, 64, 64, 1);
@@ -616,7 +631,7 @@ impl MemPoolITA {
         eps_mult: i32,
         right_shift: i32,
     ) {
-        debug!("===================== 3D Requantization =====================");
+        // debug!("===================== 3D Requantization =====================");
 
         // Loop over the number of heads
         for i in 0..m.shape()[0] {
@@ -639,7 +654,7 @@ impl MemPoolITA {
         eps_mult: i32,
         right_shift: i32,
     ) {
-        debug!("===================== Parallel 3D Requantization =====================");
+        // debug!("===================== Parallel 3D Requantization =====================");
 
         for i in 0..m.shape()[0] {
             for j in 0..m.shape()[1] {
@@ -661,7 +676,7 @@ impl MemPoolITA {
         b: &mut Array3<i8>,
         bias: u8,
     ) {
-        debug!("===================== Projection Space Transformation =====================");
+        // debug!("===================== Projection Space Transformation =====================");
         if bias == 1 {
             for i in 0..p.shape()[0] {
                 for j in 0..p.shape()[1] {
@@ -686,7 +701,7 @@ impl MemPoolITA {
             }
         }
 
-        debug!("projected matrix: {:?}", p);
+        // debug!("projected matrix: {:?}", p);
     }
 
     fn query_key_correlation(
@@ -694,7 +709,7 @@ impl MemPoolITA {
         kp_requant: &mut Array3<i8>,
         qk: &mut Array3<i32>,
     ) {
-        debug!("===================== Query Key Correlation =====================");
+        // debug!("===================== Query Key Correlation =====================");
 
         // Loop over the number of heads
         for i in 0..qk.shape()[0] {
@@ -712,7 +727,7 @@ impl MemPoolITA {
             }
         }
 
-        debug!("qk: {:?}", qk);
+        // debug!("qk: {:?}", qk);
     }
 
     //Compute the approximated softmax function.
@@ -721,7 +736,7 @@ impl MemPoolITA {
         a_partial_softmax: &mut Array2<i32>,
         seq_len: i32,
     ) {
-        debug!("===================== Streaming Partial SoftMax =====================");
+        // debug!("===================== Streaming Partial SoftMax =====================");
 
         // let log2e: f64 = f64::log2(f64::exp(1.0));
         // let b = 8;
@@ -797,7 +812,7 @@ impl MemPoolITA {
             }
         }
 
-        debug!("a_partial_softmax: {}", a_partial_softmax);
+        // debug!("a_partial_softmax: {}", a_partial_softmax);
     }
 
     fn single_head_computation(
@@ -805,7 +820,7 @@ impl MemPoolITA {
         vp_requant: &mut Array3<i8>,
         o_softmax: &mut Array3<i32>,
     ) {
-        debug!("===================== Single Head Computation =====================");
+        // debug!("===================== Single Head Computation =====================");
 
         // Loop over the number of heads
         for i in 0..o_softmax.shape()[0] {
@@ -823,7 +838,7 @@ impl MemPoolITA {
             }
         }
 
-        debug!("o_softmax: {:?}", o_softmax);
+        // debug!("o_softmax: {:?}", o_softmax);
     }
 
     fn multi_head_computation(
@@ -833,7 +848,7 @@ impl MemPoolITA {
         b_o: &mut Array3<i8>,
         bias: u8,
     ) {
-        debug!("===================== Multi Head Computation =====================");
+        // debug!("===================== Multi Head Computation =====================");
 
         if bias == 1 {
             for i in 0..out.shape()[0] {
@@ -861,6 +876,6 @@ impl MemPoolITA {
             }
         }
 
-        debug!("out: {:?}", out);
+        // debug!("out: {:?}", out);
     }
 }
