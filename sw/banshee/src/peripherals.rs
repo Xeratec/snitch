@@ -323,7 +323,7 @@ impl Peripheral for MemPoolITA {
             0x00 => unsafe {
                 self.config.store(value as u32, Ordering::SeqCst);
                 // Out addresses are currently hardcoded in ITA
-                let out_addresses: [u32; 4] = [0x000c0300, 0x000c0700, 0x000c0b00, 0x000c0f00];
+                let out_addresses: [u32; 4] = [0x000C3000, 0x000D3000, 0x000E3000, 0x000F3000];
                 let head_config = std::mem::transmute::<u32, [u8; 4]>(value);
                 let mut return_value = 0;
                 debug!("[ITA] Store config {:x}", value);
@@ -460,10 +460,10 @@ impl MemPoolITA {
                     }
                     trace!("[ITA] Store OUT to 0x{:x}", address + address_offset);
                     address_offset += 4;
-                    if address_offset % 0x100 == 0 {
-                        address_offset -= 0x0100;
-                        address_offset += 0x1000;
-                    }
+                    // if address_offset % 0x100 == 0 {
+                    //     address_offset -= 0x0100;
+                    //     address_offset += 0x1000;
+                    // }
                 }
             }
         }
