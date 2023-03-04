@@ -1028,11 +1028,19 @@ impl<'a, 'b> Cpu<'a, 'b> {
     }
 
     fn binary_abort_illegal_branch(&self, addr: u32, target: u32) {
-        error!(
-            "Branch to unpredicted address 0x{:x} at 0x{:x}",
-            target, addr
-        );
-        self.engine.had_error.store(true, Ordering::SeqCst);
+
+        if target == 0xa000_0000 {
+            warn!(
+                "Branch to unpredicted address 0x{:x} at 0x{:x}",
+                target, addr
+            );
+        } else {
+            error!(
+                "Branch to unpredicted address 0x{:x} at 0x{:x}",
+                target, addr
+            );
+            self.engine.had_error.store(true, Ordering::SeqCst);
+        }
     }
 
     unsafe fn binary_trace(&self, addr: u32, inst: u32, accesses: &[TraceAccess], data: &[u64]) {
