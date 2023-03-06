@@ -338,7 +338,7 @@ impl Peripheral for MemPoolITA {
                             self.right_shift.load(Ordering::SeqCst),
                         );
                         // Set `config` to done
-                        return_value |= 0x3a << (8 * i);
+                        return_value |= 0x1a << (8 * i);
                     }
                 }
                 self.config.store(return_value, Ordering::SeqCst);
@@ -358,7 +358,7 @@ impl Peripheral for MemPoolITA {
         match addr {
             0x00 => {
                 let conf = self.config.load(Ordering::SeqCst);
-                if conf == 0x3a3a3a3a {
+                if conf == 0x1a1a1a1a {
                     self.config.store(0x04040404, Ordering::SeqCst);
                 }
                 conf
