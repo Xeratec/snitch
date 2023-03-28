@@ -469,7 +469,7 @@ impl MemPoolITA {
                     let word = u32::from_ne_bytes(elements);
                     cpu.binary_store(address + address_offset, word, u32::MAX, 2);
                     for y in 0..4 {
-                        let test = cpu.binary_load(address + address_offset + y, 2);
+                        let _stest = cpu.binary_load(address + address_offset + y, 2);
                     }
                     trace!("[ITA] Store OUT to 0x{:x}", address + address_offset);
                     address_offset += 4;
@@ -631,10 +631,6 @@ impl MemPoolITA {
         // Store the output
         MemPoolITA::ita_store_2d(cpu, &out_requant, out_address, 64, 64, 1);
     }
-
-    // NOTE: At the moment also the bias matrix is given
-    // as input, but it should be initialized with random
-    // numbers in the future.
 
     fn requantize_row(element: i32, eps_mult: u8, right_shift: u8, add: i8) -> i8 {
         let mut shifted = ((element * (eps_mult as i32)) >> (right_shift as i32)) + (add as i32);
