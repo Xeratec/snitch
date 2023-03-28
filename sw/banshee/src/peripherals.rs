@@ -637,7 +637,12 @@ impl MemPoolITA {
     // numbers in the future.
 
     fn requantize_row(element: i32, eps_mult: u8, right_shift: u8, add: i8) -> i8 {
-        let shifted = ((element * (eps_mult as i32)) >> (right_shift as i32)) + (add as i32);
+        let mut shifted = ((element * (eps_mult as i32)) >> (right_shift as i32)) + (add as i32);
+
+        // Perform rounding half away from zero
+        if right_shift > 0 && ((element * (eps_mult as i32)) >> ((right_shift-1) as i32)) & 0x1 == 1 {
+            shifted = shifted.saturating_add(1);
+        }
         if shifted > 127 {
             return 127;
         } else if shifted < -128 {
@@ -684,9 +689,14 @@ impl MemPoolITA {
             for j in 0..m.shape()[1] {
                 let row = m.slice(s![i, j, ..]);
                 for k in 0..row.len() {
-                    let shifted = ((row[k] * (eps_mult as i32)) >> (right_shift as i32))
+                    let mut shifted = ((row[k] * (eps_mult as i32)) >> (right_shift as i32))
                       + m_requant[[i * m.shape()[1] + j, k]] as i32;
-                    m_requant[[i * m.shape()[1] + j, k]] =
+
+                    // Perform rounding half away from zero
+                    if right_shift > 0 && ((row[k]  * (eps_mult as i32)) >> ((right_shift-1) as i32)) & 0x1 == 1 {
+                        shifted = shifted.saturating_add(1);
+                    }
+                      m_requant[[i * m.shape()[1] + j, k]] =
                         MemPoolITA::requantize_row(shifted, 1, 0, 0);
                 }
             }
